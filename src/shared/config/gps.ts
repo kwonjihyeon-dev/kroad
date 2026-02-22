@@ -1,0 +1,8 @@
+export const GPS_CONFIG = {
+  WATCH_INTERVAL: 1000,
+  BATCH_INTERVAL: 5000,
+  HISTORY_SIZE: 20,
+  HIGH_ACCURACY: true,
+  MAX_AGE: 0,
+  TIMEOUT: 10000,
+} as const;

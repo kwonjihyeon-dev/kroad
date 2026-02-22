@@ -1,0 +1,29 @@
+// 색상
+$color-primary: #4a90d9;
+$color-primary-dark: #3a7bc8;
+$color-secondary: #cccccc;
+$color-danger: #e74c3c;
+$color-success: #2ecc71;
+$color-warning: #f39c12;
+
+// 지도 오버레이
+$polyline-color: #4a90d9;
+$polyline-alt-color: #cccccc;
+$polyline-width: 6px;
+
+// 마커
+$marker-size: 24px;
+$marker-color: $color-primary;
+$marker-pulse-color: rgba($color-primary, 0.3);
+
+// z-index
+$z-map: 1;
+$z-overlay: 10;
+$z-panel: 100;
+$z-modal: 1000;
+
+// 애니메이션
+$transition-fast: 150ms ease;
+$transition-normal: 300ms ease;
+$transition-slow: 500ms ease;
+$marker-animation-duration: 1000ms;

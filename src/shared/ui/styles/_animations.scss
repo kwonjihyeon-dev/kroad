@@ -1,0 +1,53 @@
+@use 'variables' as *;
+
+/// 마커 펄스 애니메이션
+@keyframes marker-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/// 슬라이드 업 (패널 등장)
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/// 페이드 인
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/// 부드러운 마커 이동 트랜지션
+.marker-smooth {
+  transition: top $marker-animation-duration ease, left $marker-animation-duration ease;
+}
+
+/// 마커 펄스 효과
+.marker-pulse {
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: $marker-pulse-color;
+    animation: marker-pulse 2s infinite;
+  }
+}

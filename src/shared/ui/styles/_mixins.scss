@@ -1,0 +1,28 @@
+@use 'variables' as *;
+
+/// 지도 오버레이 패널 공통 스타일
+@mixin overlay-panel {
+  position: absolute;
+  z-index: $z-panel;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+/// 마커 공통 스타일
+@mixin marker-base($size: $marker-size) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+/// 모바일 safe area padding
+@mixin safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@mixin safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
