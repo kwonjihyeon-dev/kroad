@@ -26,10 +26,27 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │       └── ui/MapPage.tsx
 │
 ├── widgets/
+│   ├── home-panel/
+│   │   ├── ui/
+│   │   │   ├── HomePanel.tsx
+│   │   │   ├── SearchBar.tsx
+│   │   │   └── home-panel.module.scss
+│   │   └── index.ts
+│   ├── search-panel/
+│   │   ├── ui/
+│   │   │   ├── SearchPanel.tsx
+│   │   │   ├── SearchResults.tsx
+│   │   │   └── search-panel.module.scss
+│   │   └── index.ts
+│   ├── route-panel/
+│   │   ├── ui/
+│   │   │   ├── RoutePanel.tsx
+│   │   │   ├── RouteHeader.tsx
+│   │   │   ├── RouteCard.tsx
+│   │   │   └── route-panel.module.scss
+│   │   └── index.ts
 │   ├── navigation-panel/
 │   │   └── ui/NavigationPanel.tsx
-│   ├── search-panel/
-│   │   └── ui/SearchPanel.tsx
 │   └── map-view/
 │       └── ui/MapView.tsx
 │
@@ -41,6 +58,11 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │   │   │   └── useGpsTracking.ts
 │   │   ├── lib/
 │   │   │   └── kalmanFilter.ts
+│   │   └── index.ts
+│   │
+│   ├── place-search/
+│   │   ├── model/
+│   │   │   └── usePlaceSearch.ts
 │   │   └── index.ts
 │   │
 │   ├── route-search/
@@ -81,6 +103,15 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │   │   ├── ui/
 │   │   │   ├── RoutePolyline.tsx
 │   │   │   └── RouteInfo.tsx
+│   │   └── index.ts
+│   │
+│   ├── place/
+│   │   ├── model/
+│   │   │   ├── placeStore.ts
+│   │   │   └── types.ts
+│   │   ├── ui/
+│   │   │   ├── PlaceItem.tsx
+│   │   │   └── place-item.module.scss
 │   │   └── index.ts
 │   │
 │   └── destination/
@@ -142,6 +173,16 @@ interface GpsPosition extends Coordinate {
 interface FilteredPosition extends Coordinate {
   raw: GpsPosition;
   isSnapped: boolean;
+}
+
+// entities/place/model/types.ts
+interface Place {
+  id: string;
+  name: string;
+  address: string;
+  coordinate: Coordinate;
+  category?: string;
+  distance?: number; // 현재 위치로부터 거리 (m)
 }
 
 // entities/route/model/types.ts
@@ -231,6 +272,20 @@ interface GpsStore {
   stopTracking: () => void;
 }
 
+// entities/place/model/placeStore.ts
+interface PlaceStore {
+  searchQuery: string;
+  searchResults: Place[];
+  selectedPlace: Place | null;
+  isSearching: boolean;
+
+  setSearchQuery: (query: string) => void;
+  setSearchResults: (results: Place[]) => void;
+  selectPlace: (place: Place) => void;
+  clearSearch: () => void;
+  setIsSearching: (value: boolean) => void;
+}
+
 // entities/route/model/routeStore.ts
 interface RouteStore {
   origin: Coordinate | null;
@@ -248,13 +303,15 @@ interface RouteStore {
 }
 
 // shared/store/uiStore.ts
+type AppScreen = 'home' | 'search' | 'route' | 'navigation';
+
 interface UiStore {
-  isSearchPanelOpen: boolean;
+  currentScreen: AppScreen;
   isNavigating: boolean;
   isLoading: boolean;
   error: string | null;
 
-  toggleSearchPanel: () => void;
+  setScreen: (screen: AppScreen) => void;
   setNavigating: (value: boolean) => void;
   setLoading: (value: boolean) => void;
   setError: (error: string | null) => void;
@@ -576,27 +633,145 @@ import styles from "./map-view.module.scss";
 7. **SCSS 테마 + 공용 스타일**
    - `_variables.scss`, `_mixins.scss`, `_animations.scss`
 
-### Phase 2: GPS 추적
+### Phase 2: UI 플로우 (홈 → 검색 → 경로 탐색)
 
-> Phase 1 완료 후. GPS 시뮬레이터 먼저 만들어 물리적 이동 없이 테스트.
+> Phase 1 완료 후. MVP 핵심 화면 전환 플로우를 구축.
+> 홈은 검색바만, 검색은 자동완성 중심, 결과 선택 시 경로 탐색으로 이동.
 
-8. `features/gps-tracking/model/useGeolocation.ts` — watchPosition 래핑
-9. `features/gps-tracking/lib/kalmanFilter.ts` — KalmanFilter 클래스
-10. `shared/__dev__/gpsSimulator.ts` — 서울 도로 좌표 시퀀스 + 이탈 시나리오
-11. `entities/position/ui/CurrentMarker.tsx` — 마커 + 애니메이션
-12. `features/map-matching/model/useMapMatching.ts` — 배치 수집 + API 호출
+**화면 전환 흐름:**
 
-### Phase 3: 경로 탐색
+```
+[홈 화면] → 검색바 탭 → [검색 화면] → 자동완성 결과 선택 → [경로 탐색 화면] → 안내시작 → [내비게이션]
+    ↑                        ↑       ↑                             ↑
+    └── 뒤로가기 ──────────────┘       │                             │
+                                     └── 뒤로가기 ───────────────────┘
+```
 
-13. `shared/api/osrm/routeService.ts` — Route API 클라이언트
-14. `features/route-search/ui/SearchInput.tsx` — 출발지/도착지 입력
-15. `entities/route/ui/RoutePolyline.tsx` — 경로 폴리라인
-16. `features/route-search/ui/RouteAlternatives.tsx` — 대안 경로
-17. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
+**화면별 구성:**
 
-### Phase 4: 경로 이탈 + 재탐색
+#### 2-1. 홈 화면 (`widgets/home-panel`)
 
-18. `features/route-deviation/lib/deviationDetector.ts` — 이탈 감지 로직
-19. `features/route-deviation/model/useRouteDeviation.ts` — 재탐색 트리거
-20. `features/route-deviation/ui/RerouteNotice.tsx` — 재탐색 UI
-21. GPS 시뮬레이터로 전체 시나리오 통합 검증
+```
+┌─────────────────────────────────┐
+│  [🔍 장소, 주소 검색]     [📍]      │  ← 검색바 (탭하면 검색 화면 전환)
+├─────────────────────────────────┤
+│                                 │
+│         [ 지도 영역 ]             │  ← Naver Maps (현재 위치 중심)
+│                                 │
+└─────────────────────────────────┘
+```
+
+- 검색바는 트리거 역할만 (탭하면 검색 화면 전환, 직접 입력 불가)
+- 현재 위치 버튼(📍)으로 GPS 위치로 지도 이동
+- MVP에서는 검색바 + 지도만 표시 (즐겨찾기/메뉴는 후속 기능)
+
+#### 2-2. 검색 화면 (`widgets/search-panel`)
+
+```
+┌─────────────────────────────────┐
+│  [←] [검색어 입력...]      [❌]    │  ← 뒤로가기
+├─────────────────────────────────┤
+│  🔍 힐스테이트                     │  ← 자동완성 결과 (입력 시 실시간)
+│  🔍 힐스테이트롯데캐슬골드1단지         │
+│  🔍 힐스테이트운정아파트              │
+├─────────────────────────────────┤
+│  📍 힐스테이트뉴포레아파트            │  ← 장소 결과 (주소 + 거리)
+│     서울 관악구 조원로 25  702m     │
+│  📍 힐스테이트관악센트씨엘            │
+│     서울 관악구 은천로 25  1.2km    │
+└─────────────────────────────────┘
+```
+
+- 입력 시: 자동완성 결과 실시간 표시 (300ms 디바운스)
+- 장소 선택 시: 도착지로 설정 → 경로 탐색 화면 전환
+- 뒤로가기(←) 또는 입력 초기화(❌): 홈 화면 복귀
+
+#### 2-3. 경로 탐색 결과 화면 (`widgets/route-panel`)
+
+```
+┌─────────────────────────────────┐
+│ [←] 서울특별시 구로구 디지...  [↕]    │  ← 출발지 (현재위치 자동)
+│     힐스테이트관악센트씨엘            │  ← 도착지
+├─────────────────────────────────┤
+│                                 │
+│     [ 경로가 표시된 지도 ]          │  ← 출발/도착 마커 + 경로 폴리라인
+│                                 │
+├─────────────────────────────────┤
+│ ┌──────────┐ ┌──────────┐       │
+│ │ 추천      │ │ 대안 1    │       │  ← 경로 대안 카드 (가로 스크롤)
+│ │ 16분     │ │ 18분      │       │
+│ │ 오후2:25  │ │ 오후2:27  │       │
+│ │ 6.2km    │ │ 6.8km    │       │
+│ └──────────┘ └──────────┘       │
+├─────────────────────────────────┤
+│     [        안내시작        ]    │  ← CTA 버튼
+└─────────────────────────────────┘
+```
+
+- 출발지: 현재 GPS 위치 자동 설정
+- 도착지: 검색 화면에서 선택한 장소
+- 경로 대안 카드: 가로 스크롤, 카드 탭 시 해당 경로 지도에 하이라이트
+- 각 카드에 소요시간, 도착 예정시각, 거리 표시
+- 안내시작 버튼: 내비게이션 모드 진입
+- 뒤로가기(←): 홈 화면 복귀
+
+**구현 순서:**
+
+8. **화면 상태 관리 업데이트**
+   - `shared/store/uiStore.ts` — AppScreen 타입 추가 (`home` | `search` | `route` | `navigation`)
+   - 화면 전환 로직: `setScreen(screen)`
+
+9. **Place 엔티티 구현**
+   - `entities/place/model/types.ts` — Place 타입
+   - `entities/place/model/placeStore.ts` — 검색 상태 관리 (검색어, 결과, 선택된 장소)
+   - `entities/place/ui/PlaceItem.tsx` — 장소 목록 아이템 컴포넌트
+   - `entities/place/index.ts`
+
+10. **검색 기능 구현**
+    - `features/place-search/model/usePlaceSearch.ts` — 자동완성 검색 훅 (300ms 디바운스)
+    - `features/place-search/index.ts`
+
+11. **홈 화면 위젯**
+    - `widgets/home-panel/ui/SearchBar.tsx` — 검색 트리거 바 (탭 시 검색 화면 전환)
+    - `widgets/home-panel/ui/HomePanel.tsx` — 검색바 + 지도 조합
+    - `widgets/home-panel/index.ts`
+
+12. **검색 화면 위젯**
+    - `widgets/search-panel/ui/SearchResults.tsx` — 자동완성 결과 목록
+    - `widgets/search-panel/ui/SearchPanel.tsx` — 검색 input + 자동완성 결과 조합
+    - `widgets/search-panel/index.ts`
+
+13. **경로 탐색 결과 위젯**
+    - `widgets/route-panel/ui/RouteHeader.tsx` — 출발지/도착지 표시 + 스왑
+    - `widgets/route-panel/ui/RouteCard.tsx` — 경로 대안 카드
+    - `widgets/route-panel/ui/RoutePanel.tsx` — 경로 화면 조합 (헤더 + 지도 + 카드 + CTA)
+    - `widgets/route-panel/index.ts`
+
+14. **페이지 뷰 조합**
+    - `views/map/ui/MapPage.tsx` — AppScreen에 따라 홈/검색/경로/내비게이션 패널 전환
+    - `app/page.tsx` — MapPage 렌더링
+
+### Phase 3: GPS 추적
+
+> Phase 2 완료 후. GPS 시뮬레이터 먼저 만들어 물리적 이동 없이 테스트.
+
+15. `features/gps-tracking/model/useGeolocation.ts` — watchPosition 래핑
+16. `features/gps-tracking/lib/kalmanFilter.ts` — KalmanFilter 클래스
+17. `shared/__dev__/gpsSimulator.ts` — 서울 도로 좌표 시퀀스 + 이탈 시나리오
+18. `entities/position/ui/CurrentMarker.tsx` — 마커 + 애니메이션
+19. `features/map-matching/model/useMapMatching.ts` — 배치 수집 + API 호출
+
+### Phase 4: 경로 탐색 연동
+
+20. `shared/api/osrm/routeService.ts` — Route API 클라이언트
+21. `features/route-search/model/useRouteSearch.ts` — OSRM 경로 탐색 훅 (Phase 2 UI와 연결)
+22. `entities/route/ui/RoutePolyline.tsx` — 경로 폴리라인
+23. `features/route-search/ui/RouteAlternatives.tsx` — 대안 경로 지도 표시 연동
+24. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
+
+### Phase 5: 경로 이탈 + 재탐색
+
+25. `features/route-deviation/lib/deviationDetector.ts` — 이탈 감지 로직
+26. `features/route-deviation/model/useRouteDeviation.ts` — 재탐색 트리거
+27. `features/route-deviation/ui/RerouteNotice.tsx` — 재탐색 UI
+28. GPS 시뮬레이터로 전체 시나리오 통합 검증
