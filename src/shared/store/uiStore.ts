@@ -1,26 +1,24 @@
 import { create } from 'zustand';
 
+/** 앱 화면 상태 */
+export type AppScreen = 'home' | 'search' | 'route' | 'navigation';
+
 interface UiStore {
-  isSearchPanelOpen: boolean;
-  isNavigating: boolean;
+  currentScreen: AppScreen;
   isLoading: boolean;
   error: string | null;
 
-  toggleSearchPanel: () => void;
-  setNavigating: (value: boolean) => void;
+  setScreen: (screen: AppScreen) => void;
   setLoading: (value: boolean) => void;
   setError: (error: string | null) => void;
 }
 
 export const useUiStore = create<UiStore>((set) => ({
-  isSearchPanelOpen: false,
-  isNavigating: false,
+  currentScreen: 'home',
   isLoading: false,
   error: null,
 
-  toggleSearchPanel: () => set((state) => ({ isSearchPanelOpen: !state.isSearchPanelOpen })),
-
-  setNavigating: (value) => set({ isNavigating: value }),
+  setScreen: (screen) => set({ currentScreen: screen }),
 
   setLoading: (value) => set({ isLoading: value }),
 
