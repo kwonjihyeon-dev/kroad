@@ -41,15 +41,13 @@ export async function GET(request: NextRequest) {
     const data: NaverSearchResponse = await res.json();
 
     const places = data.items.map((item, index) => ({
-      id: `naver-${index}-${Date.now()}`,
+      id: `places-${index}`,
       title: item.title,
       address: item.address,
       roadAddress: item.roadAddress,
       category: item.category,
       coordinate: parseNaverCoord(Number(item.mapx), Number(item.mapy)),
     }));
-
-    console.log(places, data);
 
     return NextResponse.json(places);
   } catch {

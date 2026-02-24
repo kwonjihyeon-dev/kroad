@@ -1,8 +1,18 @@
 'use client';
 
-import { formatDistance, formatDuration } from '@shared/lib/format';
+import { useCallback, useSyncExternalStore } from 'react';
+
+import { formatArrivalTime, formatDistance, formatDuration } from '@shared/lib/format';
 
 import styles from './route-panel.module.scss';
+
+const UPDATE_INTERVAL_MS = 60_000;
+
+/** 매 분마다 갱신되는 현재 시각(분 단위)을 구독한다 */
+function subscribeToMinuteTick(onStoreChange: () => void) {
+  const id = setInterval(onStoreChange, UPDATE_INTERVAL_MS);
+  return () => clearInterval(id);
+}
 
 interface RouteCardProps {
   index: number;
@@ -14,8 +24,8 @@ interface RouteCardProps {
 
 /** 경로 대안 카드 — 소요시간, 도착예정, 거리 */
 export function RouteCard({ index, duration, distance, isSelected, onSelect }: RouteCardProps) {
-  const arrivalTime = new Date(Date.now() + duration * 1000);
-  const arrivalStr = `${arrivalTime.getHours()}:${String(arrivalTime.getMinutes()).padStart(2, '0')}`;
+  const getSnapshot = useCallback(() => formatArrivalTime(duration), [duration]);
+  const arrivalStr = useSyncExternalStore(subscribeToMinuteTick, getSnapshot, getSnapshot);
 
   return (
     <button

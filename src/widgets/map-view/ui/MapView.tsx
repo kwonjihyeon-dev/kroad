@@ -12,12 +12,12 @@ export function MapView() {
   const mapInstanceRef = useRef<naver.maps.Map | null>(null);
 
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    const map = mapRef.current;
+    if (!map || mapInstanceRef.current) return;
+    if (!window.naver?.maps) return;
 
     const initMap = () => {
-      if (!window.naver?.maps || !mapRef.current) return;
-
-      mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
+      mapInstanceRef.current = new naver.maps.Map(map, {
         center: new naver.maps.LatLng(MAP_CONFIG.DEFAULT_CENTER.lat, MAP_CONFIG.DEFAULT_CENTER.lng),
         zoom: MAP_CONFIG.DEFAULT_ZOOM,
         zoomControl: false,

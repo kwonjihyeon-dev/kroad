@@ -1,7 +1,5 @@
 'use client';
 
-import Script from 'next/script';
-
 import { HomePanel } from '@widgets/home-panel';
 import { MapView } from '@widgets/map-view';
 import { RoutePanel } from '@widgets/route-panel';

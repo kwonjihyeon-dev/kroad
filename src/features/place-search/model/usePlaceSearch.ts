@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { searchPlaces } from '@shared/api/naver/searchService';
+import { searchPlaces } from '@entities/place';
 
 const DEBOUNCE_MS = 300;
 
