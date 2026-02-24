@@ -18,10 +18,7 @@ export function MapView() {
       if (!window.naver?.maps || !mapRef.current) return;
 
       mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
-        center: new naver.maps.LatLng(
-          MAP_CONFIG.DEFAULT_CENTER.lat,
-          MAP_CONFIG.DEFAULT_CENTER.lng,
-        ),
+        center: new naver.maps.LatLng(MAP_CONFIG.DEFAULT_CENTER.lat, MAP_CONFIG.DEFAULT_CENTER.lng),
         zoom: MAP_CONFIG.DEFAULT_ZOOM,
         zoomControl: false,
         mapDataControl: false,
@@ -29,18 +26,7 @@ export function MapView() {
       });
     };
 
-    if (window.naver?.maps) {
-      initMap();
-    } else {
-      const checkInterval = setInterval(() => {
-        if (window.naver?.maps) {
-          clearInterval(checkInterval);
-          initMap();
-        }
-      }, 100);
-
-      return () => clearInterval(checkInterval);
-    }
+    initMap();
   }, []);
 
   return <div ref={mapRef} className={styles.map} />;
