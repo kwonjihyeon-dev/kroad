@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { usePlaceStore } from '@entities/place';
 import { useRouteStore } from '@entities/route';
 
+import { formatArrivalTime } from '@shared/lib/format';
 import { useUiStore } from '@shared/store/uiStore';
 
 import { RouteCard } from './RouteCard';
@@ -50,6 +51,7 @@ export function RoutePanel() {
               index={i}
               duration={route.duration}
               distance={route.distance}
+              arrivalStr={formatArrivalTime(route.departureTime, route.duration)}
               isSelected={i === selectedIndex}
               onSelect={() => handleSelectRoute(i)}
             />
