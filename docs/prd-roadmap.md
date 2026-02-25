@@ -146,8 +146,11 @@ src/                          ← FSD 레이어 (비즈니스 로직)
     │       └── _animations.scss
     ├── store/
     │   └── uiStore.ts
-    └── __dev__/
-        └── gpsSimulator.ts
+    └── store/
+        └── uiStore.ts
+
+src/__dev__/                     ← 개발 전용 (FSD 레이어 외부)
+└── gpsSimulator.ts
 ```
 
 ---
@@ -757,7 +760,7 @@ import styles from "./map-view.module.scss";
 
 15. `features/gps-tracking/model/useGeolocation.ts` — watchPosition 래핑
 16. `features/gps-tracking/lib/kalmanFilter.ts` — KalmanFilter 클래스
-17. `shared/__dev__/gpsSimulator.ts` — 서울 도로 좌표 시퀀스 + 이탈 시나리오
+17. `src/__dev__/gpsSimulator.ts` — 서울 도로 좌표 시퀀스 + 이탈 시나리오
 18. `entities/position/ui/CurrentMarker.tsx` — 마커 + 애니메이션
 19. `features/map-matching/model/useMapMatching.ts` — 배치 수집 + API 호출
 

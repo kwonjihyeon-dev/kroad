@@ -56,5 +56,8 @@ class HttpClient {
   }
 }
 
-/** 내부 API Route용 클라이언트 */
+/** 내부 Next.js API Route용 클라이언트 */
 export const api = new HttpClient();
+
+/** OSRM 경로 엔진 클라이언트 */
+export const osrmApi = new HttpClient(process.env.NEXT_PUBLIC_OSRM_BASE_URL!);
