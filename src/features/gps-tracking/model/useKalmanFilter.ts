@@ -1,10 +1,8 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
-
-import type { FilteredPosition, GpsPosition } from '@entities/position';
-
-import { KalmanFilter } from '../lib/kalmanFilter';
+import { KalmanFilter } from '@features/gps-tracking/lib';
+import type { FilteredPosition, GpsPosition } from '@entities/position/model';
 
 /**
  * 칼만 필터 훅 — GPS 원시 좌표를 필터링하여 부드러운 좌표를 반환한다

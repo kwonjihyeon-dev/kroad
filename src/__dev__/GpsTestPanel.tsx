@@ -1,16 +1,12 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-
-import { useGpsTracking } from '@features/gps-tracking';
-import { useMapMatching } from '@features/map-matching';
-
-import { useGpsStore } from '@entities/position';
-import type { GpsPosition } from '@entities/position';
-
-import { useMapStore } from '@shared/store/mapStore';
-
 import { gpsSimulator, type ScenarioName } from '@dev/gpsSimulator';
+import { useGpsTracking } from '@features/gps-tracking/model';
+import { useMapMatching } from '@features/map-matching/model';
+import { useGpsStore } from '@entities/position/model';
+import type { GpsPosition } from '@entities/position/model';
+import { useMapStore } from '@shared/store/mapStore';
 
 /**
  * GPS 시뮬레이션 테스트 패널 (개발 전용)
@@ -118,7 +114,9 @@ export function GpsTestPanel() {
               <div>
                 {filteredPosition.lat.toFixed(6)}, {filteredPosition.lng.toFixed(6)}
               </div>
-              <div style={{ color: '#aaa', marginTop: 4 }}>Snapped: {String(filteredPosition.isSnapped)}</div>
+              <div style={{ color: '#aaa', marginTop: 4 }}>
+                Snapped: {String(filteredPosition.isSnapped)}
+              </div>
             </>
           )}
         </div>

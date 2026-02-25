@@ -1,10 +1,8 @@
 'use client';
 
 import { useCallback } from 'react';
-
-import { useGpsStore } from '@entities/position';
-import type { GpsPosition } from '@entities/position';
-
+import { useGpsStore } from '@entities/position/model';
+import type { GpsPosition } from '@entities/position/model';
 import { useGeolocation } from './useGeolocation';
 import { useKalmanFilter } from './useKalmanFilter';
 

@@ -1,10 +1,8 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
-
-import { useGpsStore } from '@entities/position';
-import type { GpsPosition } from '@entities/position';
-
+import { useGpsStore } from '@entities/position/model';
+import type { GpsPosition } from '@entities/position/model';
 import { matchCoordinates } from '@shared/api/osrm/matchService';
 import { GPS_CONFIG } from '@shared/config/gps';
 import { fromOsrmLocation } from '@shared/lib/coordinateUtils';

@@ -1,7 +1,6 @@
 'use client';
 
 import { formatDistance, formatDuration } from '@shared/lib/format';
-
 import styles from './route-panel.module.scss';
 
 interface RouteCardProps {

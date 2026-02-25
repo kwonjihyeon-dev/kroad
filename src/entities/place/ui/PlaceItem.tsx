@@ -1,8 +1,7 @@
 'use client';
 
+import type { Place } from '@entities/place/model';
 import { parseBoldHtml } from '@shared/lib/format';
-
-import type { Place } from '../model/types';
 import styles from './place-item.module.scss';
 
 interface PlaceItemProps {

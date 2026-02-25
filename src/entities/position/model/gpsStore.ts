@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-
-import type { FilteredPosition, GpsPosition } from './types';
-
 import { GPS_CONFIG } from '@shared/config/gps';
+import type { FilteredPosition, GpsPosition } from './types';
 
 interface GpsStore {
   rawPosition: GpsPosition | null;

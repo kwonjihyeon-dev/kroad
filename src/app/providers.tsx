@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 /** 앱 전역 프로바이더 */

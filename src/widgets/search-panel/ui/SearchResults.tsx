@@ -1,8 +1,7 @@
 'use client';
 
-import type { Place } from '@entities/place';
-import { PlaceItem } from '@entities/place';
-
+import type { Place } from '@entities/place/model';
+import { PlaceItem } from '@entities/place/ui';
 import styles from './search-panel.module.scss';
 
 interface SearchResultsProps {

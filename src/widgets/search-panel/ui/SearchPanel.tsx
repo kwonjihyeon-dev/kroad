@@ -1,17 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import type { Place } from '@entities/place';
-import { usePlaceStore } from '@entities/place';
-import { useRouteStore } from '@entities/route';
-
-import { usePlaceSearch } from '@features/place-search';
-
+import { usePlaceSearch } from '@features/place-search/model';
+import type { Place } from '@entities/place/model';
+import { usePlaceStore } from '@entities/place/model';
+import { useRouteStore } from '@entities/route/model';
 import { useUiStore } from '@shared/store/uiStore';
-
-import { SearchResults } from './SearchResults';
 import styles from './search-panel.module.scss';
+import { SearchResults } from './SearchResults';
 
 /** 검색 화면 패널 — 검색 input + 결과 목록 */
 export function SearchPanel() {
@@ -55,7 +51,14 @@ export function SearchPanel() {
     <div className={styles.panel}>
       <div className={styles.header}>
         <button className={styles.backButton} onClick={handleBack} aria-label="뒤로가기">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
@@ -71,7 +74,14 @@ export function SearchPanel() {
           />
           {localQuery && (
             <button className={styles.clearButton} onClick={handleClear} aria-label="지우기">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <path d="M15 9l-6 6M9 9l6 6" />
               </svg>

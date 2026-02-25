@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-
 import { MAP_CONFIG } from '@shared/config/map';
 import type { Coordinate } from '@shared/lib/types';
 import { useMapStore } from '@shared/store/mapStore';

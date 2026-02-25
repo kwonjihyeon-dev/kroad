@@ -23,134 +23,150 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │
 ├── views/
 │   └── map/
-│       └── ui/MapPage.tsx
+│       └── ui/
+│           ├── MapPage.tsx
+│           └── index.ts
 │
 ├── widgets/
 │   ├── home-panel/
-│   │   ├── ui/
-│   │   │   ├── HomePanel.tsx
-│   │   │   ├── SearchBar.tsx
-│   │   │   └── home-panel.module.scss
-│   │   └── index.ts
+│   │   └── ui/
+│   │       ├── HomePanel.tsx
+│   │       ├── SearchBar.tsx
+│   │       ├── home-panel.module.scss
+│   │       └── index.ts
 │   ├── search-panel/
-│   │   ├── ui/
-│   │   │   ├── SearchPanel.tsx
-│   │   │   ├── SearchResults.tsx
-│   │   │   └── search-panel.module.scss
-│   │   └── index.ts
+│   │   └── ui/
+│   │       ├── SearchPanel.tsx
+│   │       ├── SearchResults.tsx
+│   │       ├── search-panel.module.scss
+│   │       └── index.ts
 │   ├── route-panel/
-│   │   ├── ui/
-│   │   │   ├── RoutePanel.tsx
-│   │   │   ├── RouteHeader.tsx
-│   │   │   ├── RouteCard.tsx
-│   │   │   └── route-panel.module.scss
-│   │   └── index.ts
+│   │   └── ui/
+│   │       ├── RoutePanel.tsx
+│   │       ├── RouteHeader.tsx
+│   │       ├── RouteCard.tsx
+│   │       ├── route-panel.module.scss
+│   │       └── index.ts
 │   ├── navigation-panel/
-│   │   └── ui/NavigationPanel.tsx
+│   │   └── ui/
+│   │       ├── NavigationPanel.tsx
+│   │       └── index.ts
 │   └── map-view/
-│       └── ui/MapView.tsx
+│       └── ui/
+│           ├── MapView.tsx
+│           └── index.ts
 │
 ├── features/
 │   ├── gps-tracking/
 │   │   ├── model/
 │   │   │   ├── useGeolocation.ts
 │   │   │   ├── useKalmanFilter.ts
-│   │   │   └── useGpsTracking.ts
-│   │   ├── lib/
-│   │   │   └── kalmanFilter.ts
-│   │   └── index.ts
+│   │   │   ├── useGpsTracking.ts
+│   │   │   └── index.ts
+│   │   └── lib/
+│   │       ├── kalmanFilter.ts
+│   │       └── index.ts
 │   │
 │   ├── place-search/
-│   │   ├── model/
-│   │   │   └── usePlaceSearch.ts
-│   │   └── index.ts
+│   │   └── model/
+│   │       ├── usePlaceSearch.ts
+│   │       └── index.ts
 │   │
 │   ├── route-search/
 │   │   ├── model/
-│   │   │   └── useRouteSearch.ts
-│   │   ├── ui/
-│   │   │   ├── SearchInput.tsx
-│   │   │   └── RouteAlternatives.tsx
-│   │   └── index.ts
+│   │   │   ├── useRouteSearch.ts
+│   │   │   └── index.ts
+│   │   └── ui/
+│   │       ├── SearchInput.tsx
+│   │       ├── RouteAlternatives.tsx
+│   │       └── index.ts
 │   │
 │   ├── route-deviation/
 │   │   ├── model/
-│   │   │   └── useRouteDeviation.ts
+│   │   │   ├── useRouteDeviation.ts
+│   │   │   └── index.ts
 │   │   ├── lib/
-│   │   │   └── deviationDetector.ts
-│   │   ├── ui/
-│   │   │   └── RerouteNotice.tsx
-│   │   └── index.ts
+│   │   │   ├── deviationDetector.ts
+│   │   │   └── index.ts
+│   │   └── ui/
+│   │       ├── RerouteNotice.tsx
+│   │       └── index.ts
 │   │
 │   └── map-matching/
-│       ├── model/
-│       │   └── useMapMatching.ts
-│       └── index.ts
+│       └── model/
+│           ├── useMapMatching.ts
+│           └── index.ts
 │
 ├── entities/
 │   ├── position/
 │   │   ├── model/
 │   │   │   ├── gpsStore.ts
-│   │   │   └── types.ts
-│   │   ├── ui/
-│   │   │   └── CurrentMarker.tsx
-│   │   └── index.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   └── ui/
+│   │       ├── CurrentMarker.tsx
+│   │       └── index.ts
 │   │
 │   ├── route/
 │   │   ├── model/
 │   │   │   ├── routeStore.ts
-│   │   │   └── types.ts
-│   │   ├── ui/
-│   │   │   ├── RoutePolyline.tsx
-│   │   │   └── RouteInfo.tsx
-│   │   └── index.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
+│   │   └── ui/
+│   │       ├── RoutePolyline.tsx
+│   │       ├── RouteInfo.tsx
+│   │       └── index.ts
 │   │
 │   ├── place/
 │   │   ├── model/
 │   │   │   ├── placeStore.ts
-│   │   │   └── types.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
 │   │   ├── ui/
 │   │   │   ├── PlaceItem.tsx
-│   │   │   └── place-item.module.scss
-│   │   └── index.ts
+│   │   │   ├── place-item.module.scss
+│   │   │   └── index.ts
+│   │   └── api/
+│   │       ├── searchPlaces.ts
+│   │       └── index.ts
 │   │
 │   └── destination/
 │       ├── model/
-│       │   └── types.ts
-│       ├── ui/
-│       │   └── DestinationMarker.tsx
-│       └── index.ts
+│       │   ├── types.ts
+│       │   └── index.ts
+│       └── ui/
+│           ├── DestinationMarker.tsx
+│           └── index.ts
 │
-└── shared/
-    ├── api/osrm/
-    │   ├── osrmClient.ts
-    │   ├── routeService.ts
-    │   ├── matchService.ts
-    │   ├── queryKeys.ts
-    │   └── types.ts
-    ├── config/
-    │   ├── map.ts
-    │   ├── gps.ts
-    │   └── route.ts
-    ├── lib/
-    │   ├── types.ts
-    │   ├── coordinateUtils.ts
-    │   ├── format.ts
-    │   └── naverMaps.ts
-    ├── ui/
-    │   ├── Loading.tsx
-    │   ├── ErrorBoundary.tsx
-    │   └── styles/
-    │       ├── _variables.scss
-    │       ├── _mixins.scss
-    │       └── _animations.scss
-    ├── store/
-    │   └── uiStore.ts
-    └── store/
-        └── uiStore.ts
-
-src/__dev__/                     ← 개발 전용 (FSD 레이어 외부)
-└── gpsSimulator.ts
+├── shared/
+│   ├── api/osrm/
+│   │   ├── osrmClient.ts
+│   │   ├── routeService.ts
+│   │   ├── matchService.ts
+│   │   ├── queryKeys.ts
+│   │   └── types.ts
+│   ├── config/
+│   │   ├── map.ts
+│   │   ├── gps.ts
+│   │   └── route.ts
+│   ├── lib/
+│   │   ├── types.ts
+│   │   ├── coordinateUtils.ts
+│   │   ├── format.ts
+│   │   └── naverMaps.ts
+│   ├── ui/
+│   │   ├── Loading.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   └── styles/
+│   │       ├── _variables.scss
+│   │       ├── _mixins.scss
+│   │       └── _animations.scss
+│   └── store/
+│       └── uiStore.ts
+│
+└── __dev__/                     ← 개발 전용 (FSD 레이어 외부)
+    ├── GpsTestPanel.tsx
+    └── gpsSimulator.ts
 ```
 
 ---
@@ -329,13 +345,13 @@ interface UiStore {
 // shared/api/osrm/queryKeys.ts
 const queryKeys = {
   route: (origin: Coordinate, dest: Coordinate) =>
-    ["route", origin.lat, origin.lng, dest.lat, dest.lng] as const,
+    ['route', origin.lat, origin.lng, dest.lat, dest.lng] as const,
 
   match: (coordinates: Coordinate[]) =>
-    ["match", coordinates.map((c) => `${c.lat},${c.lng}`).join("|")] as const,
+    ['match', coordinates.map((c) => `${c.lat},${c.lng}`).join('|')] as const,
 
   reroute: (current: Coordinate, dest: Coordinate) =>
-    ["reroute", current.lat, current.lng, dest.lat, dest.lng] as const,
+    ['reroute', current.lat, current.lng, dest.lat, dest.lng] as const,
 };
 ```
 
@@ -369,8 +385,8 @@ export const MAP_CONFIG = {
   DEFAULT_ZOOM: 16,
   NAVIGATION_ZOOM: 17,
   MARKER_ANIMATION_DURATION: 1000,
-  POLYLINE_COLOR: "#4A90D9",
-  ALT_POLYLINE_COLOR: "#CCCCCC",
+  POLYLINE_COLOR: '#4A90D9',
+  ALT_POLYLINE_COLOR: '#CCCCCC',
   POLYLINE_WIDTH: 6,
 } as const;
 ```
@@ -471,54 +487,54 @@ GPS도 동일:
 
 ```javascript
 // eslint.config.mjs
-import boundaries from "eslint-plugin-boundaries";
+import boundaries from 'eslint-plugin-boundaries';
 
 export default [
   {
     plugins: { boundaries },
     settings: {
-      "boundaries/elements": [
-        { type: "app", pattern: "src/app/*" },
-        { type: "views", pattern: "src/views/*" },
-        { type: "widgets", pattern: "src/widgets/*" },
-        { type: "features", pattern: "src/features/*" },
-        { type: "entities", pattern: "src/entities/*" },
-        { type: "shared", pattern: "src/shared/*" },
+      'boundaries/elements': [
+        { type: 'app', pattern: 'src/app/*' },
+        { type: 'views', pattern: 'src/views/*' },
+        { type: 'widgets', pattern: 'src/widgets/*' },
+        { type: 'features', pattern: 'src/features/*' },
+        { type: 'entities', pattern: 'src/entities/*' },
+        { type: 'shared', pattern: 'src/shared/*' },
       ],
-      "boundaries/ignore": [],
+      'boundaries/ignore': [],
     },
     rules: {
-      "boundaries/element-types": [
-        "error",
+      'boundaries/element-types': [
+        'error',
         {
-          default: "disallow",
+          default: 'disallow',
           rules: [
             {
-              from: "app",
-              allow: ["views", "widgets", "features", "entities", "shared"],
+              from: 'app',
+              allow: ['views', 'widgets', 'features', 'entities', 'shared'],
             },
             {
-              from: "views",
-              allow: ["widgets", "features", "entities", "shared"],
+              from: 'views',
+              allow: ['widgets', 'features', 'entities', 'shared'],
             },
-            { from: "widgets", allow: ["features", "entities", "shared"] },
-            { from: "features", allow: ["entities", "shared"] },
-            { from: "entities", allow: ["shared"] },
-            { from: "shared", allow: ["shared"] },
+            { from: 'widgets', allow: ['features', 'entities', 'shared'] },
+            { from: 'features', allow: ['entities', 'shared'] },
+            { from: 'entities', allow: ['shared'] },
+            { from: 'shared', allow: ['shared'] },
           ],
         },
       ],
-      "boundaries/entry-point": [
-        "error",
+      'boundaries/entry-point': [
+        'error',
         {
-          default: "disallow",
+          default: 'disallow',
           rules: [
             {
-              target: ["views", "widgets", "features", "entities"],
-              allow: ["index.ts", "index.tsx"],
+              target: ['views', 'widgets', 'features', 'entities'],
+              allow: ['index.ts', 'index.tsx'],
             },
-            { target: ["shared"], allow: "**" },
-            { target: ["app"], allow: "**" },
+            { target: ['shared'], allow: '**' },
+            { target: ['app'], allow: '**' },
           ],
         },
       ],
@@ -536,36 +552,26 @@ export default [
 export default {
   semi: true,
   singleQuote: true,
-  trailingComma: "all",
+  trailingComma: 'all',
   tabWidth: 2,
   printWidth: 100,
 
-  plugins: ["@ianvs/prettier-plugin-sort-imports"],
+  plugins: ['@ianvs/prettier-plugin-sort-imports'],
 
-  // import 정렬 순서 (빈 문자열 '' 로 그룹 사이 빈 줄 삽입)
   importOrder: [
-    // 1. React / Next.js
-    "^react$",
-    "^react/(.*)$",
-    "^next$",
-    "^next/(.*)$",
-    "",
-    // 2. 외부 라이브러리
-    "<THIRD_PARTY_MODULES>",
-    "",
-    // 3. FSD 레이어 순서 (상위 → 하위)
-    "^@app/(.*)$",
-    "^@views/(.*)$",
-    "^@widgets/(.*)$",
-    "^@features/(.*)$",
-    "^@entities/(.*)$",
-    "^@shared/(.*)$",
-    "",
-    // 4. 상대 경로
-    "^[.]",
-    "",
-    // 5. 스타일 (SCSS, CSS)
-    "^.+\\.s?css$",
+    '^react$',
+    '^react/(.*)$',
+    '^next$',
+    '^next/(.*)$',
+    '<THIRD_PARTY_MODULES>',
+    '^@app/(.*)$',
+    '^@views/(.*)$',
+    '^@widgets/(.*)$',
+    '^@features/(.*)$',
+    '^@entities/(.*)$',
+    '^@shared/(.*)$',
+    '^[.]',
+    '^.+\\.s?css$',
   ],
 };
 ```
@@ -574,26 +580,25 @@ export default {
 
 ```typescript
 // 1. React / Next
-import { useEffect, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from 'react';
+import Script from 'next/script';
 
 // 2. 외부 라이브러리
-import { useQuery } from "@tanstack/react-query";
-import { create } from "zustand";
+import { useQuery } from '@tanstack/react-query';
+import { create } from 'zustand';
 
 // 3. FSD 레이어 (상위 → 하위)
-import { useGpsTracking } from "@features/gps-tracking";
-import { useRouteSearch } from "@features/route-search";
-import { CurrentMarker } from "@entities/position";
-import { RoutePolyline } from "@entities/route";
-import { MAP_CONFIG } from "@shared/config/map";
-import { osrmClient } from "@shared/api/osrm";
-
-// 4. 상대 경로
-import { helper } from "./utils";
+import { useGpsTracking } from '@features/gps-tracking';
+import { useRouteSearch } from '@features/route-search';
+import { CurrentMarker } from '@entities/position';
+import { RoutePolyline } from '@entities/route';
+import { osrmClient } from '@shared/api/osrm';
+import { MAP_CONFIG } from '@shared/config/map';
 
 // 5. 스타일
-import styles from "./map-view.module.scss";
+import styles from './map-view.module.scss';
+// 4. 상대 경로
+import { helper } from './utils';
 ```
 
 ---
@@ -773,6 +778,7 @@ import styles from "./map-view.module.scss";
 24. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
 
 **출발 시각(departureTime) 규칙:**
+
 - OSRM API 응답을 `RouteResult`로 변환할 때 `departureTime: Date.now()`를 한 번만 캡처한다.
 - `RouteResult.departureTime`은 도착 예정 시각 계산의 기준이 된다 (`departureTime + duration`).
 - UI 컴포넌트(RouteCard 등)는 이미 계산된 문자열을 props로 받아 렌더링만 한다. 컴포넌트가 렌더링할 때마다 다른 결과를 반환하지 않도록 멱등성을 가지도록 설계한다.
@@ -793,11 +799,13 @@ import styles from "./map-view.module.scss";
 MVP에서는 OSRM(교통 미반영)으로 경로를 탐색하지만, 추후 TMAP 경로 API를 추가하여 실시간 교통 정보가 반영된 경로를 제공한다.
 
 **방식:**
+
 - 경로 탐색 화면에 "실시간 교통 반영" 토글 버튼 추가
 - 토글 OFF (기본): OSRM으로 경로 탐색 — 무료, 빠름, 교통 미반영
 - 토글 ON: TMAP 경로 API로 경로 탐색 — 무료(일 제한), 실시간 교통 반영
 
 **참고:**
+
 - OSRM 경로 위에 교통 데이터를 얹는 방식은 불가 — 교통 반영은 경로 자체를 다시 계산해야 하므로 엔진 전환이 필요
 - TMAP API는 서버 간 호출 — Next.js API Route 프록시 필요
 - 폴링 주기: 30초~1분 (실시간 교통 데이터 갱신 주기에 맞춤)

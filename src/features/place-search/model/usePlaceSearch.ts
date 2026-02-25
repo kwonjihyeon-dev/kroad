@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
-
-import { searchPlaces } from '@entities/place';
+import { searchPlaces } from '@entities/place/api';
 
 const DEBOUNCE_MS = 300;
 

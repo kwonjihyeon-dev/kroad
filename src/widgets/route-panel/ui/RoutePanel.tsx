@@ -1,16 +1,13 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-
-import { usePlaceStore } from '@entities/place';
-import { useRouteStore } from '@entities/route';
-
+import { usePlaceStore } from '@entities/place/model';
+import { useRouteStore } from '@entities/route/model';
 import { formatArrivalTime } from '@shared/lib/format';
 import { useUiStore } from '@shared/store/uiStore';
-
+import styles from './route-panel.module.scss';
 import { RouteCard } from './RouteCard';
 import { RouteHeader } from './RouteHeader';
-import styles from './route-panel.module.scss';
 
 /** 경로 탐색 결과 패널 — 헤더 + 경로 카드 + 안내 시작 CTA */
 export function RoutePanel() {

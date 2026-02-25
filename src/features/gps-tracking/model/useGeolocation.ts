@@ -1,9 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-
-import type { GpsPosition } from '@entities/position';
-
+import type { GpsPosition } from '@entities/position/model';
 import { GPS_CONFIG } from '@shared/config/gps';
 
 type GeolocationCallback = (position: GpsPosition) => void;

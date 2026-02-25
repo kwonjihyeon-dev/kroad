@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-
 import { MAP_CONFIG } from '@shared/config/map';
 import { useMapStore } from '@shared/store/mapStore';
-
 import styles from './map-view.module.scss';
 
 /** Naver Maps 지도 컴포넌트 */

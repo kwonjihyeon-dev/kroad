@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import type { NaverSearchResponse } from '@shared/api/naver/types';
 
 const NAVER_SEARCH_API_URL = 'https://openapi.naver.com/v1/search/local.json';

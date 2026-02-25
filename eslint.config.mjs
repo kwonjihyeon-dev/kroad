@@ -21,6 +21,7 @@ const eslintConfig = defineConfig([
       'boundaries/ignore': [],
     },
     rules: {
+      'import/no-anonymous-default-export': 'off',
       'boundaries/element-types': [
         'error',
         {
@@ -48,7 +49,7 @@ const eslintConfig = defineConfig([
           rules: [
             {
               target: ['views', 'widgets', 'features', 'entities'],
-              allow: ['index.ts', 'index.tsx'],
+              allow: ['*/index.ts', '*/index.tsx'],
             },
             { target: ['shared'], allow: '**' },
             { target: ['app'], allow: '**' },

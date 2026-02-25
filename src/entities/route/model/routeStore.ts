@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-
 import type { Coordinate } from '@shared/lib/types';
-
 import type { DeviationState, RouteResult } from './types';
 
 interface RouteStore {

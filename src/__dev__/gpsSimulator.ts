@@ -1,5 +1,4 @@
-import type { GpsPosition } from '@entities/position';
-
+import type { GpsPosition } from '@entities/position/model';
 import { GPS_CONFIG } from '@shared/config/gps';
 
 /** GPS 시뮬레이터 시나리오 */

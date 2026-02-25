@@ -46,15 +46,16 @@ app → views → widgets → features → entities → shared
 
 1. **상위 → 하위만 import 가능.** 역방향 절대 금지.
 2. **같은 레이어 내 슬라이스 간 cross-import 금지.**
-3. **외부에서 슬라이스 접근 시 반드시 index.ts를 통해서만.**
+3. **외부에서 슬라이스 접근 시 반드시 세그먼트 index.ts를 통해서만.**
 
 ```
 ✅ widgets/map-view → features/gps-tracking
 ✅ features/route-search → entities/route
 ❌ entities/route → features/route-search (역방향)
 ❌ features/gps-tracking → features/route-deviation (같은 레이어)
-❌ import from '@features/gps-tracking/lib/kalmanFilter' (내부 직접 접근)
-✅ import from '@features/gps-tracking' (index.ts 통해)
+❌ import from '@features/gps-tracking/lib/kalmanFilter' (내부 파일 직접 접근)
+✅ import from '@features/gps-tracking/model' (세그먼트 index.ts 통해)
+✅ import from '@features/gps-tracking/lib' (세그먼트 index.ts 통해)
 ```
 
 ### 디렉토리 구조 (Next.js + FSD 분리)
@@ -68,7 +69,8 @@ kroad/
     ├── widgets/
     ├── features/
     ├── entities/
-    └── shared/
+    ├── shared/
+    └── __dev__/  ← 개발 전용 (FSD 레이어 외부)
 ```
 
 - `app/` (루트): Next.js 라우팅 전용 — layout.tsx, page.tsx, providers.tsx
@@ -83,20 +85,45 @@ kroad/
 @features/*  → src/features/*
 @entities/*  → src/entities/*
 @shared/*    → src/shared/*
+@dev/*       → src/__dev__/*    (개발 전용)
 ```
 
 - **shared 레이어**: 직접 파일 import 허용 (`@shared/config/map`)
-- **그 외 레이어**: 반드시 `index.ts`를 통해 import (`@features/gps-tracking`)
+- **그 외 레이어**: 세그먼트 레벨 `index.ts`를 통해 import (`@features/gps-tracking/model`)
+
+### Import 세그먼트 규칙
+
+외부에서 슬라이스를 import할 때 **레이어/슬라이스/세그먼트** 단위까지 명시한다.
+
+```typescript
+// ✅ 올바른 import — 세그먼트(model, ui, lib, api)까지 명시
+import { useGpsTracking } from '@features/gps-tracking/model';
+import { KalmanFilter } from '@features/gps-tracking/lib';
+import { CurrentMarker } from '@entities/position/ui';
+import { useGpsStore } from '@entities/position/model';
+import { searchPlaces } from '@entities/place/api';
+import { MapView } from '@widgets/map-view/ui';
+
+// ❌ 잘못된 import — 슬라이스 레벨만 표시 (세그먼트 구분 없음)
+import { useGpsTracking } from '@features/gps-tracking';
+import { CurrentMarker, useGpsStore } from '@entities/position';
+
+// ❌ 잘못된 import — 세그먼트 내부 파일 직접 접근
+import { useGpsTracking } from '@features/gps-tracking/model/useGpsTracking';
+```
 
 ### 슬라이스 내부 세그먼트 구조
 
 ```
 각 슬라이스/
-├── model/     # 훅, 스토어, 비즈니스 로직
-├── ui/        # 컴포넌트 + 스타일
-├── lib/       # 순수 함수/클래스
-├── api/       # 해당 슬라이스 전용 API
-└── index.ts   # public API (외부 노출용 re-export만)
+├── model/        # 훅, 스토어, 비즈니스 로직
+│   └── index.ts  # 세그먼트 public API
+├── ui/           # 컴포넌트 + 스타일
+│   └── index.ts  # 세그먼트 public API
+├── lib/          # 순수 함수/클래스
+│   └── index.ts  # 세그먼트 public API
+└── api/          # 해당 슬라이스 전용 API
+    └── index.ts  # 세그먼트 public API
 ```
 
 ---
@@ -124,10 +151,8 @@ kroad/
 
 ## 환경 변수
 
-```env
-NEXT_PUBLIC_NAVER_MAPS_CLIENT_ID=your_client_id
-NEXT_PUBLIC_OSRM_BASE_URL=http://localhost:5001
-```
+- 환경 변수는 `.env.local` 파일을 확인하고 사용한다.
+- 새 환경 변수 추가 시 `.env.local`에 등록 후 코드에서 참조한다.
 
 ---
 
@@ -166,6 +191,37 @@ GET {OSRM_BASE_URL}/match/v1/driving/{lng1},{lat1};{lng2},{lat2};...
 - SCSS 모듈: kebab-case (`map-view.module.scss`)
 - 모든 컴포넌트와 훅에 JSDoc 주석 작성
 - Naver Maps 관련 컴포넌트에 `'use client'` 디렉티브 필수
+
+---
+
+## 커밋 컨벤션
+
+### 형식
+
+```
+type: 한글 설명
+```
+
+### 타입
+
+| 타입     | 용도                                    |
+| -------- | --------------------------------------- |
+| feat     | 새로운 기능 추가                        |
+| fix      | 버그 수정                               |
+| chore    | 설정, 빌드, 의존성 등 코드 외 변경     |
+| docs     | 문서 추가/수정                          |
+| refactor | 기능 변경 없는 코드 구조 개선           |
+| style    | 포맷팅, 세미콜론 등 코드 의미 변경 없음 |
+
+### 예시
+
+```
+feat: 로컬에서 gps 이동 테스트 로직 추가
+fix: 멱등성을 해칠 수 있는 부분을 제거하고 컴포넌트, 함수를 순수하게 변경
+chore: 개발에서 테스트를 위한 로직 위치 수정
+docs: Phase 2 UI 플로우 추가
+refactor: FSD import를 세그먼트 레벨로 변경
+```
 
 ---
 

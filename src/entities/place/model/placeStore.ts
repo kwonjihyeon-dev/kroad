@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-
 import type { Place } from './types';
 
 interface PlaceStore {

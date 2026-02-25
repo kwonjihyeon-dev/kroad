@@ -1,7 +1,6 @@
 import { osrmApi } from '@shared/api/http';
 import { toOsrmCoords } from '@shared/lib/coordinateUtils';
 import type { Coordinate } from '@shared/lib/types';
-
 import type { OsrmMatchResponse } from './types';
 
 /**
