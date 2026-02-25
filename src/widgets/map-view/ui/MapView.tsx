@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { MAP_CONFIG } from '@shared/config/map';
+import { useMapStore } from '@shared/store/mapStore';
 
 import styles from './map-view.module.scss';
 
@@ -10,24 +11,23 @@ import styles from './map-view.module.scss';
 export function MapView() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<naver.maps.Map | null>(null);
+  const setMapInstance = useMapStore((s) => s.setMapInstance);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || mapInstanceRef.current) return;
+    const el = mapRef.current;
+    if (!el || mapInstanceRef.current) return;
     if (!window.naver?.maps) return;
 
-    const initMap = () => {
-      mapInstanceRef.current = new naver.maps.Map(map, {
-        center: new naver.maps.LatLng(MAP_CONFIG.DEFAULT_CENTER.lat, MAP_CONFIG.DEFAULT_CENTER.lng),
-        zoom: MAP_CONFIG.DEFAULT_ZOOM,
-        zoomControl: false,
-        mapDataControl: false,
-        scaleControl: false,
-      });
-    };
+    mapInstanceRef.current = new naver.maps.Map(el, {
+      center: new naver.maps.LatLng(MAP_CONFIG.DEFAULT_CENTER.lat, MAP_CONFIG.DEFAULT_CENTER.lng),
+      zoom: MAP_CONFIG.DEFAULT_ZOOM,
+      zoomControl: false,
+      mapDataControl: false,
+      scaleControl: false,
+    });
 
-    initMap();
-  }, []);
+    setMapInstance(mapInstanceRef.current);
+  }, [setMapInstance]);
 
   return <div ref={mapRef} className={styles.map} />;
 }

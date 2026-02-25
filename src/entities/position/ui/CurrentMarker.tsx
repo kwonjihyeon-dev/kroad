@@ -4,16 +4,17 @@ import { useEffect, useRef } from 'react';
 
 import { MAP_CONFIG } from '@shared/config/map';
 import type { Coordinate } from '@shared/lib/types';
+import { useMapStore } from '@shared/store/mapStore';
 
 interface CurrentMarkerProps {
-  map: naver.maps.Map | null;
   position: Coordinate | null;
 }
 
 /**
  * 현재 위치 마커 — CSS transition으로 부드럽게 이동
  */
-export function CurrentMarker({ map, position }: CurrentMarkerProps) {
+export function CurrentMarker({ position }: CurrentMarkerProps) {
+  const map = useMapStore((s) => s.mapInstance);
   const markerRef = useRef<naver.maps.Marker | null>(null);
 
   useEffect(() => {
