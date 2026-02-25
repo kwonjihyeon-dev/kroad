@@ -22,11 +22,13 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * 소요시간(초)을 기반으로 도착 예정 시각 문자열을 반환한다.
- * @example formatArrivalTime(3600) → "오후 3:05"
+ * 출발 시각과 소요시간(초)을 기반으로 도착 예정 시각 문자열을 반환한다.
+ * @param departureTime 출발 기준 시각(ms timestamp)
+ * @param durationSeconds 소요시간(초)
+ * @example formatArrivalTime(Date.now(), 3600) → "오후 3:05"
  */
-export function formatArrivalTime(durationSeconds: number): string {
-  const arrival = new Date(Date.now() + durationSeconds * 1000);
+export function formatArrivalTime(departureTime: number, durationSeconds: number): string {
+  const arrival = new Date(departureTime + durationSeconds * 1000);
   return arrival.toLocaleTimeString('ko-KR', {
     hour: 'numeric',
     minute: '2-digit',

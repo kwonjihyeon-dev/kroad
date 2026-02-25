@@ -711,7 +711,7 @@ import styles from "./map-view.module.scss";
 - 출발지: 현재 GPS 위치 자동 설정
 - 도착지: 검색 화면에서 선택한 장소
 - 경로 대안 카드: 가로 스크롤, 카드 탭 시 해당 경로 지도에 하이라이트
-- 각 카드에 소요시간, 도착 예정시각, 거리 표시
+- 각 카드에 소요시간, 도착 예정시각, 거리 표시 (도착 예정시각은 `RouteResult.departureTime` 기준으로 계산된 문자열을 전달받음)
 - 안내시작 버튼: 내비게이션 모드 진입
 - 뒤로가기(←): 홈 화면 복귀
 
@@ -768,6 +768,11 @@ import styles from "./map-view.module.scss";
 22. `entities/route/ui/RoutePolyline.tsx` — 경로 폴리라인
 23. `features/route-search/ui/RouteAlternatives.tsx` — 대안 경로 지도 표시 연동
 24. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
+
+**출발 시각(departureTime) 규칙:**
+- OSRM API 응답을 `RouteResult`로 변환할 때 `departureTime: Date.now()`를 한 번만 캡처한다.
+- `RouteResult.departureTime`은 도착 예정 시각 계산의 기준이 된다 (`departureTime + duration`).
+- UI 컴포넌트(RouteCard 등)는 이미 계산된 문자열을 props로 받아 렌더링만 한다. 컴포넌트가 렌더링할 때마다 다른 결과를 반환하지 않도록 멱등성을 가지도록 설계한다.
 
 ### Phase 5: 경로 이탈 + 재탐색
 
