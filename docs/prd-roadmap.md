@@ -391,7 +391,7 @@ Geolocation API → 칼만 필터 → 좌표 배치 수집 → OSRM Map Matching
   → 이탈 감지 (경로 안내 모드일 때)
 ```
 
-**칼만 필터 (중고등학생 설명 버전):**
+**칼만 필터 설명**
 
 ```
 시험 점수를 예측한다고 해보자.
@@ -775,3 +775,21 @@ import styles from "./map-view.module.scss";
 26. `features/route-deviation/model/useRouteDeviation.ts` — 재탐색 트리거
 27. `features/route-deviation/ui/RerouteNotice.tsx` — 재탐색 UI
 28. GPS 시뮬레이터로 전체 시나리오 통합 검증
+
+---
+
+## 향후 아이디어
+
+### 실시간 교통 정보 — 경로 엔진 토글
+
+MVP에서는 OSRM(교통 미반영)으로 경로를 탐색하지만, 추후 TMAP 경로 API를 추가하여 실시간 교통 정보가 반영된 경로를 제공한다.
+
+**방식:**
+- 경로 탐색 화면에 "실시간 교통 반영" 토글 버튼 추가
+- 토글 OFF (기본): OSRM으로 경로 탐색 — 무료, 빠름, 교통 미반영
+- 토글 ON: TMAP 경로 API로 경로 탐색 — 무료(일 제한), 실시간 교통 반영
+
+**참고:**
+- OSRM 경로 위에 교통 데이터를 얹는 방식은 불가 — 교통 반영은 경로 자체를 다시 계산해야 하므로 엔진 전환이 필요
+- TMAP API는 서버 간 호출 — Next.js API Route 프록시 필요
+- 폴링 주기: 30초~1분 (실시간 교통 데이터 갱신 주기에 맞춤)
