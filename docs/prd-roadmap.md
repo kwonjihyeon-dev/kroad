@@ -18,7 +18,6 @@ app/                          ← Next.js App Router (라우팅 전용)
 src/                          ← FSD 레이어 (비즈니스 로직)
 ├── app/                      ← FSD app 레이어 (전역 구성)
 │   ├── globals.scss
-│   ├── providers.tsx
 │   └── favicon.ico
 │
 ├── views/
@@ -65,11 +64,6 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │   │   │   └── index.ts
 │   │   └── lib/
 │   │       ├── kalmanFilter.ts
-│   │       └── index.ts
-│   │
-│   ├── place-search/
-│   │   └── model/
-│   │       ├── usePlaceSearch.ts
 │   │       └── index.ts
 │   │
 │   ├── route-search/
@@ -143,7 +137,6 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │   │   ├── osrmClient.ts
 │   │   ├── routeService.ts
 │   │   ├── matchService.ts
-│   │   ├── queryKeys.ts
 │   │   └── types.ts
 │   ├── config/
 │   │   ├── map.ts
@@ -335,24 +328,6 @@ interface UiStore {
   setLoading: (value: boolean) => void;
   setError: (error: string | null) => void;
 }
-```
-
----
-
-## TanStack Query 키
-
-```typescript
-// shared/api/osrm/queryKeys.ts
-const queryKeys = {
-  route: (origin: Coordinate, dest: Coordinate) =>
-    ['route', origin.lat, origin.lng, dest.lat, dest.lng] as const,
-
-  match: (coordinates: Coordinate[]) =>
-    ['match', coordinates.map((c) => `${c.lat},${c.lng}`).join('|')] as const,
-
-  reroute: (current: Coordinate, dest: Coordinate) =>
-    ['reroute', current.lat, current.lng, dest.lat, dest.lng] as const,
-};
 ```
 
 ---
@@ -584,7 +559,6 @@ import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
 // 2. 외부 라이브러리
-import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 
 // 3. FSD 레이어 (상위 → 하위)
@@ -736,8 +710,8 @@ import { helper } from './utils';
    - `entities/place/index.ts`
 
 10. **검색 기능 구현**
-    - `features/place-search/model/usePlaceSearch.ts` — 자동완성 검색 훅 (300ms 디바운스)
-    - `features/place-search/index.ts`
+    - 장소 검색 로직(디바운스 + fetch + AbortController)은 `widgets/search-panel/ui/SearchPanel.tsx`에 인라인
+    - 별도 feature 슬라이스 없이 위젯에서 `entities/place/api/searchPlaces`를 직접 호출
 
 11. **홈 화면 위젯**
     - `widgets/home-panel/ui/SearchBar.tsx` — 검색 트리거 바 (탭 시 검색 화면 전환)

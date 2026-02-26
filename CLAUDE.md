@@ -16,7 +16,7 @@ Kroad는 웹 기반 네비게이션 서비스다. 실시간 GPS 추적, 경로 �
 | ----------- | ---------------------------------------------- |
 | 프레임워크  | Next.js 15+ (App Router)                       |
 | 언어        | TypeScript (strict mode)                       |
-| 상태관리    | Zustand (클라이언트) + TanStack Query (서버)   |
+| 상태관리    | Zustand                                        |
 | 스타일링    | Tailwind CSS + SCSS Modules                    |
 | 지도        | Naver Maps JavaScript API v3                   |
 | 경로 엔진   | OSRM (Docker)                                  |
@@ -73,7 +73,7 @@ kroad/
     └── __dev__/  ← 개발 전용 (FSD 레이어 외부)
 ```
 
-- `app/` (루트): Next.js 라우팅 전용 — layout.tsx, page.tsx, providers.tsx
+- `app/` (루트): Next.js 라우팅 전용 — layout.tsx, page.tsx
 - `src/app/`: FSD app 레이어 — 위젯 조합, 페이지 구성 로직
 
 ### 경로 별칭 (tsconfig paths)
@@ -97,19 +97,17 @@ kroad/
 
 ```typescript
 // ✅ 올바른 import — 세그먼트(model, ui, lib, api)까지 명시
-import { useGpsTracking } from '@features/gps-tracking/model';
-import { KalmanFilter } from '@features/gps-tracking/lib';
-import { CurrentMarker } from '@entities/position/ui';
-import { useGpsStore } from '@entities/position/model';
-import { searchPlaces } from '@entities/place/api';
 import { MapView } from '@widgets/map-view/ui';
-
 // ❌ 잘못된 import — 슬라이스 레벨만 표시 (세그먼트 구분 없음)
 import { useGpsTracking } from '@features/gps-tracking';
-import { CurrentMarker, useGpsStore } from '@entities/position';
-
+import { KalmanFilter } from '@features/gps-tracking/lib';
+import { useGpsTracking } from '@features/gps-tracking/model';
 // ❌ 잘못된 import — 세그먼트 내부 파일 직접 접근
 import { useGpsTracking } from '@features/gps-tracking/model/useGpsTracking';
+import { searchPlaces } from '@entities/place/api';
+import { CurrentMarker, useGpsStore } from '@entities/position';
+import { useGpsStore } from '@entities/position/model';
+import { CurrentMarker } from '@entities/position/ui';
 ```
 
 ### 슬라이스 내부 세그먼트 구조
@@ -208,7 +206,7 @@ type: 한글 설명
 | -------- | --------------------------------------- |
 | feat     | 새로운 기능 추가                        |
 | fix      | 버그 수정                               |
-| chore    | 설정, 빌드, 의존성 등 코드 외 변경     |
+| chore    | 설정, 빌드, 의존성 등 코드 외 변경      |
 | docs     | 문서 추가/수정                          |
 | refactor | 기능 변경 없는 코드 구조 개선           |
 | style    | 포맷팅, 세미콜론 등 코드 의미 변경 없음 |

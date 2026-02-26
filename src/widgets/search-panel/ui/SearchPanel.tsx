@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { usePlaceSearch } from '@features/place-search/model';
+import { searchPlaces } from '@entities/place/api';
 import type { Place } from '@entities/place/model';
 import { usePlaceStore } from '@entities/place/model';
 import { useRouteStore } from '@entities/route/model';
@@ -9,15 +9,18 @@ import { useUiStore } from '@shared/store/uiStore';
 import styles from './search-panel.module.scss';
 import { SearchResults } from './SearchResults';
 
+const DEBOUNCE_MS = 300;
+
 /** 검색 화면 패널 — 검색 input + 결과 목록 */
 export function SearchPanel() {
   const setScreen = useUiStore((s) => s.setScreen);
   const { setSelectedPlace, setSearchQuery, searchQuery } = usePlaceStore();
   const setDestination = useRouteStore((s) => s.setDestination);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [localQuery, setLocalQuery] = useState(searchQuery);
-
-  const { data: results = [], isLoading } = usePlaceSearch(localQuery);
+  const [results, setResults] = useState<Place[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -27,14 +30,43 @@ export function SearchPanel() {
     setScreen('home');
   }, [setScreen]);
 
+  const fetchPlaces = useCallback((query: string) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    abortRef.current?.abort();
+
+    if (query.trim().length < 2) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+
+    timerRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      try {
+        const data = await searchPlaces(query, controller.signal);
+        setResults(data);
+      } catch (e) {
+        const isAborted = e instanceof DOMException && e.name === 'AbortError';
+        if (!isAborted) setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }, DEBOUNCE_MS);
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalQuery(e.target.value);
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchQuery(value);
+    fetchPlaces(value);
   };
 
   const handleClear = () => {
-    setLocalQuery('');
     setSearchQuery('');
+    fetchPlaces('');
     inputRef.current?.focus();
   };
 
@@ -67,12 +99,12 @@ export function SearchPanel() {
             ref={inputRef}
             className={styles.input}
             type="text"
-            value={localQuery}
+            value={searchQuery}
             onChange={handleInputChange}
             placeholder="장소, 주소 검색"
             autoComplete="off"
           />
-          {localQuery && (
+          {searchQuery && (
             <button className={styles.clearButton} onClick={handleClear} aria-label="지우기">
               <svg
                 width="18"
