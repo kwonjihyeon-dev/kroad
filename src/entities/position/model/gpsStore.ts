@@ -4,9 +4,9 @@ import type { FilteredPosition, GpsPosition } from './types';
 
 interface GpsStore {
   rawPosition: GpsPosition | null;
-  filteredPosition: FilteredPosition | null;
+  filteredPosition: FilteredPosition | null; // 현재 위치갱신
   isTracking: boolean;
-  positionHistory: FilteredPosition[];
+  positionHistory: FilteredPosition[]; // 최근 20개 이력 유지
 
   updateRawPosition: (pos: GpsPosition) => void;
   updateFilteredPosition: (pos: FilteredPosition) => void;
