@@ -22,7 +22,7 @@
 | ---------- | ---------------------------------- |
 | 프레임워크 | Next.js 15+ (App Router)           |
 | 언어       | TypeScript                         |
-| 상태관리   | Zustand + TanStack Query           |
+| 상태관리   | Zustand                            |
 | 스타일링   | Tailwind CSS + SCSS Modules        |
 | 지도       | Naver Maps JavaScript API v3       |
 | 경로 엔진  | OSRM (Open Source Routing Machine) |
@@ -41,7 +41,7 @@
 ### 1. 프로젝트 클론 및 의존성 설치
 
 ```bash
-git clone https://github.com/your-username/kroad.git
+git clone https://github.com/kwonjihyeon-dev/kroad.git
 cd kroad
 pnpm install
 ```
@@ -53,7 +53,7 @@ pnpm install
 ### 3. 개발 서버 실행
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 `http://localhost:3000`에서 확인할 수 있습니다.
@@ -79,15 +79,6 @@ kroad/
 레이어 의존성: `app → views → widgets → features → entities → shared`
 
 상위 레이어에서 하위 레이어만 import 가능하며, `eslint-plugin-boundaries`로 자동 강제됩니다.
-
----
-
-## 문서
-
-| 문서                                       | 설명                         |
-| ------------------------------------------ | ---------------------------- |
-| [CLAUDE.md](CLAUDE.md)                     | 프로젝트 규칙 및 Agent 지침  |
-| [docs/prd-roadmap.md](docs/prd-roadmap.md) | MVP 기능 스펙 및 구현 가이드 |
 
 ---
 
