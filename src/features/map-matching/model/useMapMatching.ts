@@ -24,19 +24,21 @@ export function useMapMatching() {
     const timestamps = batch.map((p) => Math.floor(p.timestamp / 1000));
 
     try {
+      // OSRM이 각 좌표를 가장 가까운 도로 위로 스냅해서 반환
       const response = await matchCoordinates(coordinates, timestamps);
 
       if (response.code === 'Ok' && response.tracepoints.length > 0) {
+         // 응답의 마지막 tracepoint만 사용 (= 가장 최근 위치)
         const lastTracepoint = response.tracepoints[response.tracepoints.length - 1];
         const lastRaw = batch[batch.length - 1];
 
         if (lastTracepoint) {
           const snapped = fromOsrmLocation(lastTracepoint.location);
           updateFilteredPosition({
-            lat: snapped.lat,
+            lat: snapped.lat, // 도로 위 보정 좌표
             lng: snapped.lng,
-            raw: lastRaw,
-            isSnapped: true,
+            raw: lastRaw, // 원본 GPS 좌표 보존
+            isSnapped: true, // 스냅 성공 여부
           });
         }
       }
