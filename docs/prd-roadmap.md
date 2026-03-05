@@ -372,7 +372,7 @@ export const MAP_CONFIG = {
 
 ### 기능 1: 실시간 GPS 추적 + 마커 이동
 
-- 브라우저 Geolocation API watchPosition으로 1~2초 간격 수집
+- 브라우저 Geolocation API watchPosition으로 좌표 변경 시 이벤트 수신 (모바일 기준 대략 1초 전후, 보장되지 않음. => 개발 시 필요한 GPS 시뮬레이터 1초 설정)
 - 칼만 필터로 노이즈 제거 (3~15m 오차 보정)
 - 5~10초 간격으로 좌표 배치 수집 → OSRM Map Matching API로 도로 스냅
 - 마커는 CSS transition으로 부드럽게 애니메이션 이동
@@ -757,12 +757,73 @@ import { helper } from './utils';
 - `RouteResult.departureTime`은 도착 예정 시각 계산의 기준이 된다 (`departureTime + duration`).
 - UI 컴포넌트(RouteCard 등)는 이미 계산된 문자열을 props로 받아 렌더링만 한다. 컴포넌트가 렌더링할 때마다 다른 결과를 반환하지 않도록 멱등성을 가지도록 설계한다.
 
-### Phase 5: 경로 이탈 + 재탐색
+### Phase 5: 턴바이턴 네비게이션
 
-25. `features/route-deviation/lib/deviationDetector.ts` — 이탈 감지 로직
-26. `features/route-deviation/model/useRouteDeviation.ts` — 재탐색 트리거
-27. `features/route-deviation/ui/RerouteNotice.tsx` — 재탐색 UI
-28. GPS 시뮬레이터로 전체 시나리오 통합 검증
+> Phase 4 완료 후. 경로 위에서 현재 step을 추적하고 회전 안내를 표시.
+> 이탈 재탐색(Phase 6)보다 먼저 구현 — step 진행 상태가 이탈 판단의 기반이 됨.
+
+**핵심 개념:**
+
+- `activeRoute.steps[].maneuver.location` = 회전/방향전환이 발생하는 도로 위 좌표
+- `filteredPosition`과 각 step의 `maneuver.location` 간 거리를 실시간 비교하여 진행도 추적
+- 다음 maneuver 지점에 접근하면 step 통과 → 그 다음 안내로 전환
+
+**안내 흐름:**
+
+```
+매 filteredPosition 갱신
+  → distanceBetween(filteredPosition, nextStep.maneuver.location)
+  → 임계값(30m) 이내? → currentStepIndex++ (step 통과)
+  → UI 갱신: "300m 후 좌회전" → "좌회전" → "500m 후 우회전"
+  → 마지막 step(arrive) 도달 → 안내 종료
+```
+
+**구현 순서:**
+
+25. **Navigation 상태 확장**
+    - `entities/route/model/types.ts` — `NavigationState` 타입 추가 (`currentStepIndex`, `distanceToNextManeuver`, `isNavigating`)
+    - `entities/route/model/routeStore.ts` — navigation 상태 및 액션 추가
+
+26. **Step 진행 추적 훅**
+    - `features/turn-by-turn/model/useStepTracker.ts` — `filteredPosition` 변화 감지 → step 통과 판정
+    - `features/turn-by-turn/lib/stepProgress.ts` — step 통과 판정 순수 함수 (거리 계산 + 접근/통과 판별)
+    - `features/turn-by-turn/model/index.ts`, `features/turn-by-turn/lib/index.ts`
+
+27. **Maneuver 한글 안내 변환**
+    - `features/turn-by-turn/lib/maneuverInstruction.ts` — OSRM maneuver type+modifier → 한글 안내 문자열 매핑
+
+28. **네비게이션 패널 UI**
+    - `widgets/navigation-panel/ui/NavigationPanel.tsx` — 다음 회전 안내 + 남은 거리/시간
+    - `widgets/navigation-panel/ui/ManeuverIcon.tsx` — 회전 방향 아이콘
+    - `widgets/navigation-panel/ui/navigation-panel.module.scss`
+    - `widgets/navigation-panel/ui/index.ts`
+
+29. **MapPage 연동**
+    - `views/map/ui/MapPage.tsx` — `navigation` 화면에서 NavigationPanel 렌더링
+    - 안내시작 버튼 → `isNavigating: true` + GPS 추적 시작 + step 추적 시작
+
+**네비게이션 화면 구성:**
+
+```
+┌─────────────────────────────────┐
+│  [↰ 좌회전]           300m     │  ← 다음 회전 안내 (아이콘 + 거리)
+│  종로                          │  ← 다음 도로명
+├─────────────────────────────────┤
+│                                 │
+│         [ 지도 영역 ]           │  ← 경로 폴리라인 + 현재 위치 마커
+│                                 │
+├─────────────────────────────────┤
+│  도착 14:25  │  12분  │  4.2km  │  ← 도착예정 / 남은시간 / 남은거리
+│         [    안내종료    ]      │
+└─────────────────────────────────┘
+```
+
+### Phase 6: 경로 이탈 + 재탐색
+
+30. `features/route-deviation/lib/deviationDetector.ts` — 이탈 감지 로직
+31. `features/route-deviation/model/useRouteDeviation.ts` — 재탐색 트리거
+32. `features/route-deviation/ui/RerouteNotice.tsx` — 재탐색 UI
+33. GPS 시뮬레이터로 전체 시나리오 통합 검증
 
 ---
 
