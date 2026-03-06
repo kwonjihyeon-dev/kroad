@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Coordinate } from '@shared/lib/types';
-import type { DeviationState, RouteResult } from './types';
+import type { DeviationState, NavigationState, RouteResult } from './types';
 
 interface RouteStore {
   origin: Coordinate | null;
@@ -8,12 +8,14 @@ interface RouteStore {
   activeRoute: RouteResult | null;
   alternativeRoutes: RouteResult[];
   deviation: DeviationState;
+  navigation: NavigationState;
 
   setOrigin: (coord: Coordinate) => void;
   setDestination: (coord: Coordinate) => void;
   setActiveRoute: (route: RouteResult) => void;
   setAlternativeRoutes: (routes: RouteResult[]) => void;
   updateDeviation: (state: Partial<DeviationState>) => void;
+  updateNavigation: (state: Partial<NavigationState>) => void;
   clearRoute: () => void;
 }
 
@@ -24,12 +26,19 @@ const initialDeviation: DeviationState = {
   isRerouting: false,
 };
 
+const initialNavigation: NavigationState = {
+  currentStepIndex: 0,
+  distanceToNextManeuver: 0,
+  isNavigating: false,
+};
+
 export const useRouteStore = create<RouteStore>((set) => ({
   origin: null,
   destination: null,
   activeRoute: null,
   alternativeRoutes: [],
   deviation: initialDeviation,
+  navigation: initialNavigation,
 
   setOrigin: (coord) => set({ origin: coord }),
 
@@ -44,6 +53,11 @@ export const useRouteStore = create<RouteStore>((set) => ({
       deviation: { ...state.deviation, ...partial },
     })),
 
+  updateNavigation: (partial) =>
+    set((state) => ({
+      navigation: { ...state.navigation, ...partial },
+    })),
+
   clearRoute: () =>
     set({
       origin: null,
@@ -51,5 +65,6 @@ export const useRouteStore = create<RouteStore>((set) => ({
       activeRoute: null,
       alternativeRoutes: [],
       deviation: initialDeviation,
+      navigation: initialNavigation,
     }),
 }));

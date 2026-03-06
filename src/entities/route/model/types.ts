@@ -26,3 +26,12 @@ export interface DeviationState {
   deviationStartTime: number | null;
   isRerouting: boolean;
 }
+
+export interface NavigationState {
+  /** 현재 진행 중인 step 인덱스 */
+  currentStepIndex: number;
+  /** 다음 maneuver 지점까지 거리 (m) */
+  distanceToNextManeuver: number;
+  /** 네비게이션 모드 활성화 여부 */
+  isNavigating: boolean;
+}
