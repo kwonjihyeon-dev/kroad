@@ -1,0 +1,149 @@
+@use '@shared/ui/styles/variables' as *;
+@use '@shared/ui/styles/mixins' as *;
+
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-panel;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.instruction {
+  @include safe-area-top;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: $color-primary;
+  color: white;
+  pointer-events: auto;
+  animation: slide-down 0.3s ease;
+}
+
+.instructionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.instructionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.instructionAction {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.instructionRoad {
+  font-size: 14px;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instructionDistance {
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.footer {
+  @include safe-area-bottom;
+
+  background: white;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+  animation: slide-up 0.3s ease;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #999;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: #eee;
+  flex-shrink: 0;
+}
+
+.stopButton {
+  width: calc(100% - 32px);
+  margin: 0 16px 16px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: $color-danger;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: darken($color-danger, 8%);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

@@ -29,7 +29,10 @@ export function RoutePanel() {
     }
   };
 
+  const updateNavigation = useRouteStore((s) => s.updateNavigation);
+
   const handleStartNavigation = () => {
+    updateNavigation({ isNavigating: true, currentStepIndex: 0, distanceToNextManeuver: 0 });
     setScreen('navigation');
   };
 
