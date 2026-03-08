@@ -7,7 +7,7 @@ import { MapView } from '@widgets/map-view/ui';
 import { NavigationPanel } from '@widgets/navigation-panel/ui';
 import { RoutePanel } from '@widgets/route-panel/ui';
 import { SearchPanel } from '@widgets/search-panel/ui';
-import { useGpsTracking } from '@features/gps-tracking/model';
+import { useGpsTracking, useInitialPosition } from '@features/gps-tracking/model';
 import { useRouteSearch } from '@features/route-search/model';
 import { RouteAlternatives } from '@features/route-search/ui';
 import { usePlaceStore } from '@entities/place/model';
@@ -26,6 +26,7 @@ export function MapPage() {
   const selectedPlace = usePlaceStore((s) => s.selectedPlace);
   const isNavigating = useRouteStore((s) => s.navigation.isNavigating);
 
+  useInitialPosition();
   useRouteSearch(filteredPosition, selectedPlace?.coordinate ?? null);
 
   const { start: startGps, stop: stopGps } = useGpsTracking();
