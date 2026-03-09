@@ -35,8 +35,8 @@ export function NavigationPanel() {
     setScreen('home');
   }, [updateNavigation, setScreen]);
 
-  const { arrivalTime, remainingDistance, remainingDuration } = useMemo(() => {
-    if (!activeRoute) return { arrivalTime: '', remainingDistance: 0, remainingDuration: 0 };
+  const { remainingDistance, remainingDuration } = useMemo(() => {
+    if (!activeRoute) return { remainingDistance: 0, remainingDuration: 0 };
 
     const { currentStepIndex, distanceToNextManeuver } = navigation;
     const currentStep = activeRoute.steps[currentStepIndex];
@@ -48,14 +48,11 @@ export function NavigationPanel() {
     const progressRatio =
       currentStepDistance > 0 ? distanceToNextManeuver / currentStepDistance : 0;
 
-    const rd = currentStepDuration * progressRatio + futureDuration;
-
     return {
-      arrivalTime: gpsTimestamp ? formatArrivalTime(gpsTimestamp, rd) : '',
       remainingDistance: distanceToNextManeuver + futureDistance,
-      remainingDuration: rd,
+      remainingDuration: currentStepDuration * progressRatio + futureDuration,
     };
-  }, [activeRoute, navigation, gpsTimestamp]);
+  }, [activeRoute, navigation]);
 
   if (!activeRoute) return null;
 
@@ -95,7 +92,9 @@ export function NavigationPanel() {
         >
           <div className={styles.stat}>
             <span className={styles.statValueLarge}>
-              {showArrivalTime ? arrivalTime : formatDuration(remainingDuration)}
+              {showArrivalTime
+                ? gpsTimestamp ? formatArrivalTime(gpsTimestamp, remainingDuration) : ''
+                : formatDuration(remainingDuration)}
             </span>
           </div>
           <div className={styles.stat}>

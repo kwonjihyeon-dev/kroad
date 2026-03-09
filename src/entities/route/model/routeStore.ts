@@ -8,7 +8,7 @@ interface RouteStore {
   activeRoute: RouteResult | null;
   alternativeRoutes: RouteResult[];
   deviation: DeviationState;
-  navigation: NavigationState;
+  navigation: NavigationState; // 도로 위에서 현재 진행 상태
 
   setOrigin: (coord: Coordinate) => void;
   setDestination: (coord: Coordinate) => void;
