@@ -40,7 +40,7 @@ export function NavigationPanel() {
 
     const { currentStepIndex, distanceToNextManeuver } = navigation;
     const currentStep = activeRoute.steps[currentStepIndex];
-    const futureSteps = activeRoute.steps.slice(currentStepIndex);
+    const futureSteps = activeRoute.steps.slice(currentStepIndex + 1);
     const futureDistance = futureSteps.reduce((sum, step) => sum + step.distance, 0);
     const futureDuration = futureSteps.reduce((sum, step) => sum + step.duration, 0);
     const currentStepDistance = currentStep?.distance || 0;
