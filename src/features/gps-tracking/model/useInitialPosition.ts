@@ -21,8 +21,7 @@ export function useInitialPosition() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-        const timestamp = Date.now();
-        const raw = { lat, lng, accuracy, heading: null, speed: null, timestamp };
+        const raw = { lat, lng, accuracy, timestamp: pos.timestamp, heading: null, speed: null};
 
         updateFilteredPosition({ lat, lng, raw, isSnapped: false });
       },
