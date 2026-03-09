@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouteSearch } from '@features/route-search/model';
 import { searchPlaces } from '@entities/place/api';
 import type { Place } from '@entities/place/model';
 import { usePlaceStore } from '@entities/place/model';
+import { useGpsStore } from '@entities/position/model';
 import { useRouteStore } from '@entities/route/model';
 import { useUiStore } from '@shared/store/uiStore';
 import styles from './search-panel.module.scss';
@@ -16,6 +18,7 @@ export function SearchPanel() {
   const setScreen = useUiStore((s) => s.setScreen);
   const { setSelectedPlace, setSearchQuery, searchQuery } = usePlaceStore();
   const setDestination = useRouteStore((s) => s.setDestination);
+  const { searchRoute } = useRouteSearch();
   const inputRef = useRef<HTMLInputElement>(null);
   const [results, setResults] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,8 +78,11 @@ export function SearchPanel() {
       setSelectedPlace(place);
       setDestination(place.coordinate);
       setScreen('route');
+
+      const position = useGpsStore.getState().filteredPosition;
+      if (position) searchRoute(position, place.coordinate);
     },
-    [setSelectedPlace, setDestination, setScreen],
+    [setSelectedPlace, setDestination, setScreen, searchRoute],
   );
 
   return (

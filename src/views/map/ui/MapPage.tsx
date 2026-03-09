@@ -7,10 +7,8 @@ import { MapView } from '@widgets/map-view/ui';
 import { NavigationPanel } from '@widgets/navigation-panel/ui';
 import { RoutePanel } from '@widgets/route-panel/ui';
 import { SearchPanel } from '@widgets/search-panel/ui';
-import { useGpsTracking } from '@features/gps-tracking/model';
-import { useRouteSearch } from '@features/route-search/model';
+import { useGpsTracking, useInitialPosition } from '@features/gps-tracking/model';
 import { RouteAlternatives } from '@features/route-search/ui';
-import { usePlaceStore } from '@entities/place/model';
 import { useGpsStore } from '@entities/position/model';
 import { CurrentMarker } from '@entities/position/ui';
 import { useRouteStore } from '@entities/route/model';
@@ -23,10 +21,9 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 export function MapPage() {
   const currentScreen = useUiStore((s) => s.currentScreen);
   const filteredPosition = useGpsStore((s) => s.filteredPosition);
-  const selectedPlace = usePlaceStore((s) => s.selectedPlace);
   const isNavigating = useRouteStore((s) => s.navigation.isNavigating);
 
-  useRouteSearch(filteredPosition, selectedPlace?.coordinate ?? null);
+  useInitialPosition();
 
   const { start: startGps, stop: stopGps } = useGpsTracking();
 

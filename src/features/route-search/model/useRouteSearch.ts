@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { fetchRoute } from '@shared/api/osrm/routeService';
 import { decodePolyline, fromOsrmLocation } from '@shared/lib/coordinateUtils';
 import type { Coordinate } from '@shared/lib/types';
@@ -33,22 +33,19 @@ function toRouteResult(route: OsrmRoute, departureTime: number): RouteResult {
 }
 
 /**
- * 출발지·목적지가 모두 존재하면 OSRM 경로 탐색을 실행하고 routeStore에 저장한다.
+ * OSRM 경로 탐색 함수를 반환하는 훅.
+ * 유저가 장소를 선택한 시점에 searchRoute를 명시적으로 호출한다.
  */
-export function useRouteSearch(origin: Coordinate | null, destination: Coordinate | null) {
+export function useRouteSearch() {
   const setActiveRoute = useRouteStore((s) => s.setActiveRoute);
   const setAlternativeRoutes = useRouteStore((s) => s.setAlternativeRoutes);
 
-  useEffect(() => {
-    if (!origin || !destination) return;
-
-    let cancelled = false;
-
-    async function search() {
+  const searchRoute = useCallback(
+    async (origin: Coordinate, destination: Coordinate) => {
       try {
-        const response = await fetchRoute(origin!, destination!);
+        const response = await fetchRoute(origin, destination);
 
-        if (cancelled || response.code !== 'Ok' || response.routes.length === 0) return;
+        if (response.code !== 'Ok' || response.routes.length === 0) return;
 
         const departureTime = Date.now();
         const [first, ...rest] = response.routes;
@@ -58,12 +55,9 @@ export function useRouteSearch(origin: Coordinate | null, destination: Coordinat
       } catch {
         // 네트워크 오류 시 무시 — UI에서 빈 상태로 표시
       }
-    }
+    },
+    [setActiveRoute, setAlternativeRoutes],
+  );
 
-    search();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [origin, destination, setActiveRoute, setAlternativeRoutes]);
+  return { searchRoute };
 }
