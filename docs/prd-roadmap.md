@@ -108,7 +108,6 @@ src/                          ← FSD 레이어 (비즈니스 로직)
 │   │   │   └── index.ts
 │   │   └── ui/
 │   │       ├── RoutePolyline.tsx
-│   │       ├── RouteInfo.tsx
 │   │       └── index.ts
 │   │
 │   ├── place/
@@ -749,7 +748,7 @@ import { helper } from './utils';
 21. `features/route-search/model/useRouteSearch.ts` — OSRM 경로 탐색 함수를 반환하는 훅 (SearchPanel에서 명시적 호출)
 22. `entities/route/ui/RoutePolyline.tsx` — 경로 폴리라인
 23. `features/route-search/ui/RouteAlternatives.tsx` — 대안 경로 지도 표시 연동
-24. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
+24. `widgets/route-panel/ui/RouteCard.tsx` — 경로 대안 카드 (거리/시간/도착시각)
 
 **출발 시각(departureTime) 규칙:**
 
@@ -844,3 +843,12 @@ MVP에서는 OSRM(교통 미반영)으로 경로를 탐색하지만, 추후 TMAP
 - OSRM 경로 위에 교통 데이터를 얹는 방식은 불가 — 교통 반영은 경로 자체를 다시 계산해야 하므로 엔진 전환이 필요
 - TMAP API는 서버 간 호출 — Next.js API Route 프록시 필요
 - 폴링 주기: 30초~1분 (실시간 교통 데이터 갱신 주기에 맞춤)
+
+### 출발지 변경 기능
+
+현재 출발지는 GPS 현재 위치(`gpsStore.filteredPosition`)를 직접 사용하고 있으며,
+향후 출발지 변경 기능이 필요하면 `routeStore`에 `origin`을 추가하고, 경로 탐색 시 현재 위치를 `origin`에 저장하는 흐름으로 확장한다.
+
+### 목적지 도착 시 자동 안내 종료
+
+현재 MVP에서는 사용자가 "안내 종료" 버튼을 눌러 수동으로 종료한다. 향후 마지막 step 도달 시 자동으로 안내를 종료하고 도착 화면을 보여주거나 목적지에 도착하면 현재 UI 대신 목적지에 도착했다 + 안내 종료와 같은 UI로 자동 변경되도록하는 흐름으로 확장한다.

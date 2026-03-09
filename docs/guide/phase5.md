@@ -204,11 +204,6 @@ export function useStepTracker() {
         distanceToNextManeuver: distanceToNext,
       });
     }
-
-    // 마지막 step 도달 시 안내 종료
-    if (newStepIndex >= activeRoute.steps.length - 1) {
-      updateNavigation({ isNavigating: false });
-    }
   }, [filteredPosition, activeRoute, navigation, updateNavigation]);
 }
 ```

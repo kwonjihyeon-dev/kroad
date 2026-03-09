@@ -33,7 +33,7 @@ OSRM 응답 수신
   ▼
 UI 렌더링
   ├─ RouteAlternatives → RoutePolyline (지도 위 경로선)
-  └─ RouteInfo → 소요시간, 거리, 도착 예정 시각
+  └─ RouteCard → 소요시간, 거리, 도착 예정 시각 (widgets/route-panel)
 ```
 
 ---
@@ -121,7 +121,7 @@ setAlternativeRoutes(rest.map((r) => toRouteResult(r, departureTime)));
 
 **왜 `Date.now()`를 한 번만 호출하는가:**
 
-도착 예정 시각 = `departureTime + duration`. 만약 `RouteInfo` 컴포넌트가 렌더링할 때마다
+도착 예정 시각 = `departureTime + duration`. 만약 `RouteCard` 컴포넌트가 렌더링할 때마다
 `Date.now()`를 호출하면, 리렌더링될 때마다 도착 시각이 달라진다 (멱등하지 않음).
 
 ```
@@ -195,33 +195,30 @@ const handleAlternativeClick = (index: number) => {
 
 ## 4. 경로 요약 정보
 
-### 4-1. RouteInfo — 거리/시간 패널
+### 4-1. RouteCard — 경로 대안 카드
 
-**파일**: `entities/route/ui/RouteInfo.tsx`
+**파일**: `widgets/route-panel/ui/RouteCard.tsx`
 
 ```typescript
-<RouteInfo duration={route.duration} distance={route.distance} departureTime={route.departureTime} />
+<RouteCard
+  index={0}
+  duration={route.duration}
+  distance={route.distance}
+  arrivalStr="오후 2:25"
+  isSelected={true}
+  onSelect={() => { ... }}
+/>
 ```
 
-세 가지 포맷 함수로 OSRM 원시값을 사용자 친화적 문자열로 변환한다:
+경로 대안 카드로 소요시간, 거리, 도착 예정 시각을 표시하고, 다중 경로 선택 기능을 제공한다.
+도착 예정 시각은 호출부에서 `departureTime + duration`으로 계산한 문자열(`arrivalStr`)을 props로 받아 렌더링만 하므로 멱등성이 보장된다.
+
+포맷 함수로 OSRM 원시값을 사용자 친화적 문자열로 변환한다:
 
 | 함수 | 입력 | 출력 예시 |
 | --- | --- | --- |
 | `formatDuration(seconds)` | `1234.5` (초) | `"21분"` 또는 `"1시간 30분"` |
 | `formatDistance(meters)` | `15000.2` (미터) | `"15.0km"` 또는 `"800m"` |
-| `formatArrivalTime(departureTime, duration)` | ms 타임스탬프, 초 | `"오후 2:25"` |
-
-**formatArrivalTime 동작:**
-
-```typescript
-const arrival = new Date(departureTime + durationSeconds * 1000);
-return arrival.toLocaleTimeString('ko-KR', {
-  hour: 'numeric', minute: '2-digit', hour12: true,
-});
-```
-
-`departureTime`(탐색 시점 고정값)에 `duration`을 더해 도착 시각을 계산한다.
-`Date.now()`를 사용하지 않으므로 리렌더링해도 결과가 변하지 않는다.
 
 ---
 
@@ -307,7 +304,7 @@ ROUTE_CONFIG = {
 | `entities/route/model/routeStore.ts` | 경로 상태 스토어 |
 | `entities/route/model/types.ts` | RouteResult, RouteStep, DeviationState 타입 |
 | `entities/route/ui/RoutePolyline.tsx` | 폴리라인 컴포넌트 |
-| `entities/route/ui/RouteInfo.tsx` | 거리/시간/도착시각 표시 |
+| `widgets/route-panel/ui/RouteCard.tsx` | 경로 대안 카드 (거리/시간/도착시각) |
 | `shared/lib/coordinateUtils.ts` | 좌표 변환, polyline 디코딩, 거리 계산 |
 | `shared/lib/format.ts` | 거리/시간/도착시각 포맷팅 |
 | `shared/config/map.ts` | 지도 설정 상수 |

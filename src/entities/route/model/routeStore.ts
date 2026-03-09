@@ -3,14 +3,12 @@ import type { Coordinate } from '@shared/lib/types';
 import type { DeviationState, NavigationState, RouteResult } from './types';
 
 interface RouteStore {
-  origin: Coordinate | null;
   destination: Coordinate | null;
   activeRoute: RouteResult | null;
   alternativeRoutes: RouteResult[];
   deviation: DeviationState;
   navigation: NavigationState; // 도로 위에서 현재 진행 상태
 
-  setOrigin: (coord: Coordinate) => void;
   setDestination: (coord: Coordinate) => void;
   setActiveRoute: (route: RouteResult) => void;
   setAlternativeRoutes: (routes: RouteResult[]) => void;
@@ -33,14 +31,11 @@ const initialNavigation: NavigationState = {
 };
 
 export const useRouteStore = create<RouteStore>((set) => ({
-  origin: null,
   destination: null,
   activeRoute: null,
   alternativeRoutes: [],
   deviation: initialDeviation,
   navigation: initialNavigation,
-
-  setOrigin: (coord) => set({ origin: coord }),
 
   setDestination: (coord) => set({ destination: coord }),
 
@@ -60,7 +55,6 @@ export const useRouteStore = create<RouteStore>((set) => ({
 
   clearRoute: () =>
     set({
-      origin: null,
       destination: null,
       activeRoute: null,
       alternativeRoutes: [],

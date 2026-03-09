@@ -16,7 +16,7 @@ export function NavigationPanel() {
   const setScreen = useUiStore((s) => s.setScreen);
   const activeRoute = useRouteStore((s) => s.activeRoute);
   const navigation = useRouteStore((s) => s.navigation);
-  const updateNavigation = useRouteStore((s) => s.updateNavigation);
+  const clearRoute = useRouteStore((s) => s.clearRoute);
   const gpsTimestamp = useGpsStore((s) => s.rawPosition?.timestamp ?? 0);
   const { start: startGps, stop: stopGps } = useGpsTracking();
 
@@ -31,9 +31,9 @@ export function NavigationPanel() {
   const [showArrivalTime, setShowArrivalTime] = useState(true);
 
   const handleStopNavigation = useCallback(() => {
-    updateNavigation({ isNavigating: false });
+    clearRoute();
     setScreen('home');
-  }, [updateNavigation, setScreen]);
+  }, [clearRoute, setScreen]);
 
   const { remainingDistance, remainingDuration } = useMemo(() => {
     if (!activeRoute) return { remainingDistance: 0, remainingDuration: 0 };
@@ -81,7 +81,7 @@ export function NavigationPanel() {
           {nextRoadName && <span className={styles.instructionRoad}>{nextRoadName}</span>}
         </div>
         <div className={styles.instructionDistance}>
-          {distanceToNextManeuver > 0 ? formatDistance(distanceToNextManeuver) : ''}
+          {formatDistance(distanceToNextManeuver)}
         </div>
       </div>
 

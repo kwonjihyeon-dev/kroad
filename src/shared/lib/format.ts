@@ -2,9 +2,14 @@
  * 미터 → 사람이 읽기 쉬운 거리 문자열
  */
 export function formatDistance(meters: number): string {
+  if (!meters) {
+    return '0m'
+  }
+
   if (meters < 1000) {
     return `${Math.round(meters)}m`;
   }
+  
   return `${(meters / 1000).toFixed(1)}km`;
 }
 
