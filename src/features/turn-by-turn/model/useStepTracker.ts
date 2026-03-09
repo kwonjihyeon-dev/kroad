@@ -10,21 +10,23 @@ import { calculateStepProgress } from '../lib';
 export function useStepTracker() {
   const filteredPosition = useGpsStore((s) => s.filteredPosition);
   const activeRoute = useRouteStore((s) => s.activeRoute);
-  const navigation = useRouteStore((s) => s.navigation);
+  const isNavigating = useRouteStore((s) => s.navigation.isNavigating);
+  const currentStepIndex = useRouteStore((s) => s.navigation.currentStepIndex);
+  const distanceToNextManeuver = useRouteStore((s) => s.navigation.distanceToNextManeuver);
   const updateNavigation = useRouteStore((s) => s.updateNavigation);
 
   useEffect(() => {
-    if (!filteredPosition || !activeRoute || !navigation.isNavigating) return;
+    if (!filteredPosition || !activeRoute || !isNavigating) return;
 
     const { newStepIndex, distanceToNext } = calculateStepProgress(
       filteredPosition,
       activeRoute.steps,
-      navigation.currentStepIndex,
+      currentStepIndex,
     );
 
     if (
-      newStepIndex !== navigation.currentStepIndex ||
-      distanceToNext !== navigation.distanceToNextManeuver
+      newStepIndex !== currentStepIndex ||
+      distanceToNext !== distanceToNextManeuver
     ) {
       updateNavigation({
         currentStepIndex: newStepIndex,
@@ -36,5 +38,5 @@ export function useStepTracker() {
     if (newStepIndex >= activeRoute.steps.length - 1) {
       updateNavigation({ isNavigating: false });
     }
-  }, [filteredPosition, activeRoute, navigation, updateNavigation]);
+  }, [filteredPosition, activeRoute, isNavigating, currentStepIndex, distanceToNextManeuver, updateNavigation]);
 }

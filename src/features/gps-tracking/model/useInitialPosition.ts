@@ -22,7 +22,6 @@ export function useInitialPosition() {
       (pos) => {
         const { latitude: lat, longitude: lng, accuracy } = pos.coords;
         const raw = { lat, lng, accuracy, timestamp: pos.timestamp, heading: null, speed: null};
-
         updateFilteredPosition({ lat, lng, raw, isSnapped: false });
       },
       () => {

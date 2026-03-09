@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useGpsTracking } from '@features/gps-tracking/model';
 import { useStepTracker } from '@features/turn-by-turn/model';
 import { toInstruction } from '@features/turn-by-turn/lib';
+import { useGpsStore } from '@entities/position/model';
 import { useRouteStore } from '@entities/route/model';
 import { formatArrivalTime, formatDistance, formatDuration } from '@shared/lib/format';
 import { useUiStore } from '@shared/store/uiStore';
@@ -15,30 +17,51 @@ export function NavigationPanel() {
   const activeRoute = useRouteStore((s) => s.activeRoute);
   const navigation = useRouteStore((s) => s.navigation);
   const updateNavigation = useRouteStore((s) => s.updateNavigation);
+  const gpsTimestamp = useGpsStore((s) => s.rawPosition?.timestamp ?? 0);
+  const { start: startGps, stop: stopGps } = useGpsTracking();
 
   useStepTracker();
+
+  // NavigationPanel 마운트 시 GPS 추적 시작, 언마운트 시 중지
+  useEffect(() => {
+    startGps();
+    return () => stopGps();
+  }, [startGps, stopGps]);
+
+  const [showArrivalTime, setShowArrivalTime] = useState(true);
 
   const handleStopNavigation = useCallback(() => {
     updateNavigation({ isNavigating: false });
     setScreen('home');
   }, [updateNavigation, setScreen]);
 
+  const { arrivalTime, remainingDistance, remainingDuration } = useMemo(() => {
+    if (!activeRoute) return { arrivalTime: '', remainingDistance: 0, remainingDuration: 0 };
+
+    const { currentStepIndex, distanceToNextManeuver } = navigation;
+    const currentStep = activeRoute.steps[currentStepIndex];
+    const futureSteps = activeRoute.steps.slice(currentStepIndex);
+    const futureDistance = futureSteps.reduce((sum, step) => sum + step.distance, 0);
+    const futureDuration = futureSteps.reduce((sum, step) => sum + step.duration, 0);
+    const currentStepDistance = currentStep?.distance || 0;
+    const currentStepDuration = currentStep?.duration || 0;
+    const progressRatio =
+      currentStepDistance > 0 ? distanceToNextManeuver / currentStepDistance : 0;
+
+    const rd = currentStepDuration * progressRatio + futureDuration;
+
+    return {
+      arrivalTime: gpsTimestamp ? formatArrivalTime(gpsTimestamp, rd) : '',
+      remainingDistance: distanceToNextManeuver + futureDistance,
+      remainingDuration: rd,
+    };
+  }, [activeRoute, navigation, gpsTimestamp]);
+
   if (!activeRoute) return null;
 
   const { currentStepIndex, distanceToNextManeuver } = navigation;
   const currentStep = activeRoute.steps[currentStepIndex];
   const nextStep = activeRoute.steps[currentStepIndex + 1];
-
-  // 남은 거리/시간 계산: 현재 step 이후의 모든 step distance/duration 합산
-  const remainingDistance = activeRoute.steps
-    .slice(currentStepIndex)
-    .reduce((sum, step) => sum + step.distance, 0);
-  const remainingDuration = activeRoute.steps
-    .slice(currentStepIndex)
-    .reduce((sum, step) => sum + step.duration, 0);
-
-  // 도착 예정 시각: 출발 시점 기준 + 전체 소요시간 (멱등성 보장)
-  const arrivalTime = formatArrivalTime(activeRoute.departureTime, activeRoute.duration);
 
   // 다음 안내 정보
   const nextInstruction = nextStep
@@ -66,20 +89,17 @@ export function NavigationPanel() {
       </div>
 
       <div className={styles.footer}>
-        <div className={styles.stats}>
+        <div
+          className={styles.stats}
+          onClick={() => setShowArrivalTime((prev) => !prev)}
+        >
           <div className={styles.stat}>
-            <span className={styles.statLabel}>도착</span>
-            <span className={styles.statValue}>{arrivalTime}</span>
+            <span className={styles.statValueLarge}>
+              {showArrivalTime ? arrivalTime : formatDuration(remainingDuration)}
+            </span>
           </div>
-          <div className={styles.statDivider} />
           <div className={styles.stat}>
-            <span className={styles.statLabel}>남은 시간</span>
-            <span className={styles.statValue}>{formatDuration(remainingDuration)}</span>
-          </div>
-          <div className={styles.statDivider} />
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>남은 거리</span>
-            <span className={styles.statValue}>{formatDistance(remainingDistance)}</span>
+            <span className={styles.statValueLarge}>{formatDistance(remainingDistance)}</span>
           </div>
         </div>
         <button className={styles.stopButton} onClick={handleStopNavigation}>
