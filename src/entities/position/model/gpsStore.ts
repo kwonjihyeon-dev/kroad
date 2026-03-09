@@ -34,7 +34,6 @@ export const useGpsStore = create<GpsStore>((set) => ({
     set({
       isTracking: false,
       rawPosition: null,
-      filteredPosition: null,
       positionHistory: [],
     }),
 }));

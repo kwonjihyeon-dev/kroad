@@ -1,17 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
 import { GpsTestPanel } from '@dev/GpsTestPanel';
 import { HomePanel } from '@widgets/home-panel/ui';
 import { MapView } from '@widgets/map-view/ui';
 import { NavigationPanel } from '@widgets/navigation-panel/ui';
 import { RoutePanel } from '@widgets/route-panel/ui';
 import { SearchPanel } from '@widgets/search-panel/ui';
-import { useGpsTracking, useInitialPosition } from '@features/gps-tracking/model';
+import { useInitialPosition } from '@features/gps-tracking/model';
 import { RouteAlternatives } from '@features/route-search/ui';
 import { useGpsStore } from '@entities/position/model';
 import { CurrentMarker } from '@entities/position/ui';
-import { useRouteStore } from '@entities/route/model';
 import { useUiStore } from '@shared/store/uiStore';
 import styles from './map-page.module.scss';
 
@@ -21,20 +19,8 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 export function MapPage() {
   const currentScreen = useUiStore((s) => s.currentScreen);
   const filteredPosition = useGpsStore((s) => s.filteredPosition);
-  const isNavigating = useRouteStore((s) => s.navigation.isNavigating);
 
   useInitialPosition();
-
-  const { start: startGps, stop: stopGps } = useGpsTracking();
-
-  // 네비게이션 모드 진입/종료 시 GPS 추적 시작/중지
-  useEffect(() => {
-    if (isNavigating) {
-      startGps();
-    } else if (currentScreen !== 'navigation') {
-      stopGps();
-    }
-  }, [isNavigating, currentScreen, startGps, stopGps]);
 
   return (
     <div className={styles.container}>

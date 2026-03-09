@@ -76,14 +76,14 @@ maneuver: {
 ### 핵심 원리
 
 `filteredPosition`(도로 스냅된 현재 위치)과 다음 step의 `maneuver.location` 간 거리를 매번 계산한다.
-거리가 임계값 이내에 들어오면 해당 step을 "통과"한 것으로 판정하고 다음 step으로 넘어간다.
+거리가 임계값(STEP_ARRIVAL_THRESHOLD: 30) 이내에 들어오면 해당 step을 "통과"한 것으로 판정하고 다음 step으로 넘어간다.
 
 ### 상태
 
 ```typescript
 interface NavigationState {
   currentStepIndex: number;       // 현재 진행 중인 step 인덱스
-  distanceToNextManeuver: number; // 다음 maneuver 지점까지 거리 (m)
+  distanceToNextManeuver: number; // 다음 maneuver 지점까지 남은 거리 (m)
   isNavigating: boolean;          // 네비게이션 모드 활성화 여부
 }
 ```

@@ -44,7 +44,6 @@ export function useRouteSearch() {
     async (origin: Coordinate, destination: Coordinate) => {
       try {
         const response = await fetchRoute(origin, destination);
-
         if (response.code !== 'Ok' || response.routes.length === 0) return;
 
         const departureTime = Date.now();
