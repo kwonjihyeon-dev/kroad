@@ -16,7 +16,7 @@
 routeStore에 origin/destination 저장
   │
   ▼
-useRouteSearch (origin, destination 변화 감지)
+useRouteSearch → searchRoute(origin, destination) 명시적 호출
   │
   ▼
 fetchRoute() — OSRM Route API 호출
@@ -68,35 +68,19 @@ export async function fetchRoute(
 **파일**: `features/route-search/model/useRouteSearch.ts`
 
 ```typescript
-export function useRouteSearch(origin: Coordinate | null, destination: Coordinate | null)
+export function useRouteSearch(): { searchRoute: (origin: Coordinate, destination: Coordinate) => Promise<void> }
 ```
 
-`origin`과 `destination`이 모두 존재하면 자동으로 경로 탐색을 실행한다.
-`useEffect`의 의존성 배열에 두 좌표가 있으므로, 출발지나 도착지가 변경되면 재탐색된다.
+`searchRoute` 함수를 반환하는 훅. 유저가 장소를 선택한 시점에 명시적으로 호출한다.
+`useEffect`로 상태 변화를 감지하지 않으므로, GPS 위치 변경에 의한 불필요한 재탐색이 발생하지 않는다.
+
+**호출 위치:** `SearchPanel.handleSelect`
 
 **내부 흐름:**
 
 1. `fetchRoute(origin, destination)` 호출
 2. 응답의 `routes[0]`을 `activeRoute`로, 나머지를 `alternativeRoutes`로 저장
 3. 각 route를 `toRouteResult()`로 변환
-
-**경쟁 조건 방지:**
-
-```typescript
-let cancelled = false;
-
-async function search() {
-  const response = await fetchRoute(origin!, destination!);
-  if (cancelled) return; // 이전 요청 결과 무시
-  // ...
-}
-
-search();
-return () => { cancelled = true; };
-```
-
-`useEffect`의 cleanup 함수로 `cancelled` 플래그를 설정한다.
-출발지/도착지가 빠르게 변경될 때, 이전 요청의 응답이 뒤늦게 도착해도 스토어를 덮어쓰지 않는다.
 
 ### 2-3. toRouteResult — OSRM 응답 → 내부 타입 변환
 

@@ -562,7 +562,7 @@ import Script from 'next/script';
 import { create } from 'zustand';
 
 // 3. FSD 레이어 (상위 → 하위)
-import { useGpsTracking } from '@features/gps-tracking';
+import { useInitialPosition } from '@features/gps-tracking';
 import { useRouteSearch } from '@features/route-search';
 import { CurrentMarker } from '@entities/position';
 import { RoutePolyline } from '@entities/route';
@@ -746,7 +746,7 @@ import { helper } from './utils';
 ### Phase 4: 경로 탐색 연동
 
 20. `shared/api/osrm/routeService.ts` — Route API 클라이언트
-21. `features/route-search/model/useRouteSearch.ts` — OSRM 경로 탐색 훅 (Phase 2 UI와 연결)
+21. `features/route-search/model/useRouteSearch.ts` — OSRM 경로 탐색 함수를 반환하는 훅 (SearchPanel에서 명시적 호출)
 22. `entities/route/ui/RoutePolyline.tsx` — 경로 폴리라인
 23. `features/route-search/ui/RouteAlternatives.tsx` — 대안 경로 지도 표시 연동
 24. `entities/route/ui/RouteInfo.tsx` — 거리/시간 패널
@@ -754,8 +754,8 @@ import { helper } from './utils';
 **출발 시각(departureTime) 규칙:**
 
 - OSRM API 응답을 `RouteResult`로 변환할 때 `departureTime: Date.now()`를 한 번만 캡처한다.
-- `RouteResult.departureTime`은 도착 예정 시각 계산의 기준이 된다 (`departureTime + duration`).
-- UI 컴포넌트(RouteCard 등)는 이미 계산된 문자열을 props로 받아 렌더링만 한다. 컴포넌트가 렌더링할 때마다 다른 결과를 반환하지 않도록 멱등성을 가지도록 설계한다.
+- **경로 탐색 화면(RouteCard 등)**: `departureTime + duration`으로 도착 예정 시각을 계산한다. 이미 계산된 문자열을 props로 받아 렌더링만 하므로 멱등성이 보장된다.
+- **네비게이션 화면(NavigationPanel)**: `gpsTimestamp + remainingDuration`으로 도착 예정 시각을 계산한다. GPS 업데이트마다 `rawPosition.timestamp`가 갱신되므로 실시간으로 반영되며, `Date.now()` 대신 스토어의 순수한 값을 사용하여 렌더링 순수성을 유지한다.
 
 ### Phase 5: 턴바이턴 네비게이션
 
