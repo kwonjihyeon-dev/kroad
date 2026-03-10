@@ -44,12 +44,15 @@ export function useMapMatching() {
       }
     } catch (error) {
       console.error('Map Matching 실패:', error);
+    } finally {
+      batchRef.current = [];
     }
-
-    batchRef.current = [];
   }, [updateFilteredPosition]);
 
   const addPosition = useCallback((position: GpsPosition) => {
+    const speed = position.speed;
+    // 신호 대기, 임시 정차 등의 상황에서 불필요한 match API 호출 막기
+    if (speed == null || speed < GPS_CONFIG.STATIONARY_THRESHOLD) return;
     batchRef.current.push(position);
   }, []);
 

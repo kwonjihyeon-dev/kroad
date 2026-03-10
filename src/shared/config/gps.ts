@@ -5,4 +5,5 @@ export const GPS_CONFIG = {
   HIGH_ACCURACY: true,
   MAX_AGE: 0,
   TIMEOUT: 10000,
+  STATIONARY_THRESHOLD: 0.5,
 } as const;
