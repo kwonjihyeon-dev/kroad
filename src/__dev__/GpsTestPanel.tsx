@@ -6,6 +6,7 @@ import { useGpsTracking } from '@features/gps-tracking/model';
 import { useMapMatching } from '@features/map-matching/model';
 import { useGpsStore } from '@entities/position/model';
 import type { GpsPosition } from '@entities/position/model';
+import { useRouteStore } from '@entities/route/model';
 import { useMapStore } from '@shared/store/mapStore';
 
 /**
@@ -15,6 +16,7 @@ import { useMapStore } from '@shared/store/mapStore';
 export function GpsTestPanel() {
   const [scenario, setScenario] = useState<ScenarioName>('normal');
   const [isSimulating, setIsSimulating] = useState(false);
+  const isNavigating = useRouteStore((s) => s.navigation.isNavigating);
 
   const map = useMapStore((s) => s.mapInstance);
   const rawPosition = useGpsStore((s) => s.rawPosition);
@@ -62,6 +64,10 @@ export function GpsTestPanel() {
         fontSize: 13,
         zIndex: 9999,
         minWidth: 220,
+        transition: 'transform 0.3s ease, opacity 0.3s ease',
+        transform: isNavigating ? 'translateY(calc(100% + 32px))' : 'translateY(0)',
+        opacity: isNavigating ? 0 : 1,
+        pointerEvents: isNavigating ? 'none' : 'auto',
       }}
     >
       <div style={{ fontWeight: 700, marginBottom: 8 }}>GPS Test Panel</div>
