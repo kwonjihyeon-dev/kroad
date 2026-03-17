@@ -71,3 +71,4 @@ export function useMapMatching() {
 
   return { addPosition, start, stop };
 }
+

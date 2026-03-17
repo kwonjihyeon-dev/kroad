@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "lodash": "4.17.11",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -25,7 +26,7 @@
     "eslint-config-next": "16.1.6",
     "eslint-plugin-boundaries": "^5.4.0",
     "prettier": "^3.8.1",
-    "sass": "^1.97.3",
+    "sass": "^1.98.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
