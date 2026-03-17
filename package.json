@@ -9,10 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "lodash": "4.17.11",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "swiper": "11.0.0",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
