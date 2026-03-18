@@ -21,6 +21,9 @@ jobs:
       - name: Run security audit
         id: audit
         run: |
+          # pipefail: 파이프라인 중 실패한 명령의 exit code를 사용
+          # tee는 항상 0(성공 처리)이므로 if 구문 통과 -> npm audit의 exit code 기준으로 분기
+          set -o pipefail
           if ! npm audit --prod 2>&1 | tee audit-result.txt; then
             echo "has_vulnerability=true" >> $GITHUB_OUTPUT
           else
