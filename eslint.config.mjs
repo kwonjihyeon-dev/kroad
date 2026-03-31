@@ -3,6 +3,9 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import boundaries from 'eslint-plugin-boundaries';
 
+/** 세그먼트 index 파일만 진입점으로 허용 */
+const FSD_ENTRY = '*/index.{ts,tsx}';
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -21,37 +24,53 @@ const eslintConfig = defineConfig([
       'boundaries/ignore': [],
     },
     rules: {
-      'boundaries/element-types': [
+      'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
           rules: [
             {
-              from: 'app',
-              allow: ['views', 'widgets', 'features', 'entities', 'shared'],
+              from: { type: 'app' },
+              allow: [
+                { to: { type: 'views', internalPath: FSD_ENTRY } },
+                { to: { type: 'widgets', internalPath: FSD_ENTRY } },
+                { to: { type: 'features', internalPath: FSD_ENTRY } },
+                { to: { type: 'entities', internalPath: FSD_ENTRY } },
+                { to: { type: 'shared' } },
+              ],
             },
             {
-              from: 'views',
-              allow: ['widgets', 'features', 'entities', 'shared'],
+              from: { type: 'views' },
+              allow: [
+                { to: { type: 'widgets', internalPath: FSD_ENTRY } },
+                { to: { type: 'features', internalPath: FSD_ENTRY } },
+                { to: { type: 'entities', internalPath: FSD_ENTRY } },
+                { to: { type: 'shared' } },
+              ],
             },
-            { from: 'widgets', allow: ['features', 'entities', 'shared'] },
-            { from: 'features', allow: ['entities', 'shared'] },
-            { from: 'entities', allow: ['shared'] },
-            { from: 'shared', allow: ['shared'] },
-          ],
-        },
-      ],
-      'boundaries/entry-point': [
-        'error',
-        {
-          default: 'disallow',
-          rules: [
             {
-              target: ['views', 'widgets', 'features', 'entities'],
-              allow: ['*/index.ts', '*/index.tsx'],
+              from: { type: 'widgets' },
+              allow: [
+                { to: { type: 'features', internalPath: FSD_ENTRY } },
+                { to: { type: 'entities', internalPath: FSD_ENTRY } },
+                { to: { type: 'shared' } },
+              ],
             },
-            { target: ['shared'], allow: '**' },
-            { target: ['app'], allow: '**' },
+            {
+              from: { type: 'features' },
+              allow: [
+                { to: { type: 'entities', internalPath: FSD_ENTRY } },
+                { to: { type: 'shared' } },
+              ],
+            },
+            {
+              from: { type: 'entities' },
+              allow: [{ to: { type: 'shared' } }],
+            },
+            {
+              from: { type: 'shared' },
+              allow: [{ to: { type: 'shared' } }],
+            },
           ],
         },
       ],
