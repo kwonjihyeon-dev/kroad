@@ -42,3 +42,8 @@ next-env.d.ts
 
 #ai
 .claude
+
+# security audit (Security Audit 워크플로우 산출물)
+audit.json
+audit-result.txt
+audit-error.txt
